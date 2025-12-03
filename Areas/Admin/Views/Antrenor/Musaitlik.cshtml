@@ -1,0 +1,158 @@
+﻿@model SporSalonu.Models.Entities.Antrenor
+@{
+    ViewData["Title"] = "Müsaitlik Saatleri Yönetimi";
+}
+
+<!-- Başarı/Hata Mesajları -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>✅ Başarılı!</strong> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>❌ Hata!</strong> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">🕒 Müsaitlik Saatleri Yönetimi</h4>
+                <p class="mb-0 mt-2"><strong>Antrenör:</strong> @Model.AdSoyad</p>
+            </div>
+            <div class="card-body">
+
+                <!-- Yeni Müsaitlik Ekle Butonu -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Haftalık Çalışma Programı</h5>
+                    <a href="/Admin/Antrenor/MusaitlikEkle?antrenorId=@Model.Id" class="btn btn-success">
+                        ➕ Yeni Müsaitlik Ekle
+                    </a>
+                </div>
+
+                <!-- Müsaitlik Listesi -->
+                @if (Model.MusaitlikSaatleri != null && Model.MusaitlikSaatleri.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Gün</th>
+                                    <th>Başlangıç Saati</th>
+                                    <th>Bitiş Saati</th>
+                                    <th>Süre</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var musaitlik in Model.MusaitlikSaatleri.OrderBy(m => m.Gun))
+                                {
+                                    var sure = musaitlik.BitisSaati - musaitlik.BaslangicSaati;
+                                    <tr>
+                                        <td>
+                                            <strong>
+                                                @switch (musaitlik.Gun)
+                                                {
+                                                    case DayOfWeek.Monday:
+                                                        <span>📅 Pazartesi</span>
+                                                        break;
+                                                    case DayOfWeek.Tuesday:
+                                                        <span>📅 Salı</span>
+                                                        break;
+                                                    case DayOfWeek.Wednesday:
+                                                        <span>📅 Çarşamba</span>
+                                                        break;
+                                                    case DayOfWeek.Thursday:
+                                                        <span>📅 Perşembe</span>
+                                                        break;
+                                                    case DayOfWeek.Friday:
+                                                        <span>📅 Cuma</span>
+                                                        break;
+                                                    case DayOfWeek.Saturday:
+                                                        <span>📅 Cumartesi</span>
+                                                        break;
+                                                    case DayOfWeek.Sunday:
+                                                        <span>📅 Pazar</span>
+                                                        break;
+                                                }
+                                            </strong>
+                                        </td>
+                                        <td>🕐 @musaitlik.BaslangicSaati.ToString(@"hh\:mm")</td>
+                                        <td>🕐 @musaitlik.BitisSaati.ToString(@"hh\:mm")</td>
+                                        <td>
+                                            <span class="badge bg-info">@sure.Hours saat @sure.Minutes dk</span>
+                                        </td>
+                                        <td>
+                                            @if (musaitlik.Aktif)
+                                            {
+                                                <span class="badge bg-success">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Pasif</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="/Admin/Antrenor/MusaitlikDuzenle/@musaitlik.Id" class="btn btn-sm btn-warning" title="Düzenle">
+                                                    ✏️
+                                                </a>
+                                                <form action="/Admin/Antrenor/MusaitlikSil/@musaitlik.Id" method="post" style="display:inline;"
+                                                      onsubmit="return confirm('Bu müsaitlik saatini silmek istediğinizden emin misiniz?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="antrenorId" value="@Model.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Sil">
+                                                        🗑️
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Haftalık Özet -->
+                    <div class="alert alert-info mt-3">
+                        <strong>📊 Haftalık Özet:</strong>
+                        @{
+                            var toplamSure = TimeSpan.Zero;
+                            foreach (var m in Model.MusaitlikSaatleri.Where(x => x.Aktif))
+                            {
+                                toplamSure += m.BitisSaati - m.BaslangicSaati;
+                            }
+                        }
+                        <span>Toplam @Model.MusaitlikSaatleri.Count(m => m.Aktif) gün, @toplamSure.Hours saat @toplamSure.Minutes dakika çalışma saati</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Uyarı!</strong> Henüz müsaitlik saati tanımlanmamış.
+                        <a href="/Admin/Antrenor/MusaitlikEkle?antrenorId=@Model.Id" class="alert-link">İlk müsaitlik saatini eklemek için tıklayın.</a>
+                    </div>
+                }
+
+                <hr>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="/Admin/Antrenor/Details/@Model.Id" class="btn btn-secondary">
+                        ⬅️ Antrenör Detayına Dön
+                    </a>
+                    <a href="/Admin/Antrenor/Index" class="btn btn-info">
+                        📋 Tüm Antrenörler
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

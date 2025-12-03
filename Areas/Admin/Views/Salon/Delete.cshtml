@@ -1,0 +1,45 @@
+﻿@model SporSalonu.Models.Entities.Salon
+@{
+    ViewData["Title"] = "Salon Sil";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">🗑️ Salon Sil</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <strong>⚠️ Uyarı!</strong> Bu salonu silmek istediğinizden emin misiniz?
+                </div>
+
+                <dl class="row">
+                    <dt class="col-sm-3">Salon Adı</dt>
+                    <dd class="col-sm-9">@Model.Ad</dd>
+
+                    <dt class="col-sm-3">Adres</dt>
+                    <dd class="col-sm-9">@Model.Adres</dd>
+
+                    <dt class="col-sm-3">Çalışma Saatleri</dt>
+                    <dd class="col-sm-9">@Model.AcilisSaati.ToString(@"hh\:mm") - @Model.KapanisSaati.ToString(@"hh\:mm")</dd>
+                </dl>
+
+                <hr>
+
+                <form action="/Admin/Salon/Delete/@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            🗑️ Evet, Sil
+                        </button>
+                        <a href="/Admin/Salon/Index" class="btn btn-secondary">
+                            ❌ İptal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

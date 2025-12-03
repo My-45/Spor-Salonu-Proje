@@ -1,0 +1,67 @@
+﻿@model SporSalonu.Models.ViewModels.SalonViewModel
+@{
+    ViewData["Title"] = "Salon Düzenle";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-white">
+                <h4 class="mb-0">✏️ Salon Düzenle</h4>
+            </div>
+            <div class="card-body">
+                <form action="/Admin/Salon/Edit/@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <!-- Hidden ID -->
+                    <input type="hidden" name="Id" value="@Model.Id" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Salon Adı *</label>
+                        <input name="Ad" value="@Model.Ad" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Adres</label>
+                        <textarea name="Adres" class="form-control" rows="3">@Model.Adres</textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Açılış Saati *</label>
+                            <input name="AcilisSaati" type="time" class="form-control" value="@Model.AcilisSaati" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Kapanış Saati *</label>
+                            <input name="KapanisSaati" type="time" class="form-control" value="@Model.KapanisSaati" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <!-- Checkbox için hidden input ekleyin -->
+                        <input type="hidden" name="Aktif" value="false" />
+                        <input name="Aktif" type="checkbox" class="form-check-input" value="true" @(Model.Aktif ? "checked" : "") />
+                        <label class="form-check-label">Aktif</label>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="/Admin/Salon/Index" class="btn btn-secondary">
+                            ❌ İptal
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            💾 Güncelle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

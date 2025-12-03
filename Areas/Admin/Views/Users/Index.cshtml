@@ -1,0 +1,114 @@
+﻿@model IEnumerable<SporSalonu.Models.ViewModels.UserViewModel>
+
+@{
+    ViewData["Title"] = "Kullanıcı Yönetimi";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>👥 Kullanıcılar</h2>
+    <div>
+        <span class="badge bg-primary fs-6">Toplam: @Model.Count()</span>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card shadow">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ad Soyad</th>
+                        <th>Email</th>
+                        <th>Email Doğrulandı</th>
+                        <th>Roller</th>
+                        <th>Randevu Sayısı</th>
+                        <th>Kayıt Tarihi</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td><strong>@user.AdSoyad</strong></td>
+                            <td>
+                                <a href="mailto:@user.Email">@user.Email</a>
+                            </td>
+                            <td>
+                                @if (user.EmailConfirmed)
+                                {
+                                    <span class="badge bg-success">✓ Doğrulandı</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">⚠ Doğrulanmadı</span>
+                                }
+                            </td>
+                            <td>
+                                @if (user.Roller.Any())
+                                {
+                                    foreach (var role in user.Roller)
+                                    {
+                                        if (role == "Admin")
+                                        {
+                                            <span class="badge bg-danger me-1">👑 @role</span>
+                                        }
+                                        else if (role == "Uye")
+                                        {
+                                            <span class="badge bg-primary me-1">👤 @role</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary me-1">@role</span>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Rol yok</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-info">@user.RandevuSayisi</span>
+                            </td>
+                            <td>@user.KayitTarihi.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="/Admin/Users/Details/@user.Id" class="btn btn-sm btn-info" title="Detay">
+                                        👁️
+                                    </a>
+                                    <a href="/Admin/Users/ManageRoles/@user.Id" class="btn btn-sm btn-warning" title="Roller">
+                                        🔑
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">
+                Henüz kullanıcı bulunmuyor.
+            </div>
+        }
+    </div>
+</div>

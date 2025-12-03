@@ -1,0 +1,86 @@
+﻿@model SporSalonu.Models.ViewModels.MusaitlikSaatiViewModel
+@{
+    ViewData["Title"] = "Müsaitlik Düzenle";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-white">
+                <h4 class="mb-0">✏️ Müsaitlik Saati Düzenle</h4>
+            </div>
+            <div class="card-body">
+                <form action="/Admin/Antrenor/MusaitlikDuzenle/@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="hidden" name="AntrenorId" value="@Model.AntrenorId" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Gün *</label>
+                        <select name="Gun" class="form-select" required>
+                            @{
+                                var gunler = new Dictionary<int, string>
+                                                        {
+                                                        { 1, "Pazartesi" },
+                                                        { 2, "Salı" },
+                                                        { 3, "Çarşamba" },
+                                                        { 4, "Perşembe" },
+                                                        { 5, "Cuma" },
+                                                        { 6, "Cumartesi" },
+                                                        { 0, "Pazar" }
+                                                        };
+
+                                foreach (var gun in gunler)
+                                {
+                                    if ((int)Model.Gun == gun.Key)
+                                    {
+                                        <option value="@gun.Key" selected>@gun.Value</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@gun.Key">@gun.Value</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Başlangıç Saati *</label>
+                            <input name="BaslangicSaati" type="time" class="form-control" value="@Model.BaslangicSaati" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Bitiş Saati *</label>
+                            <input name="BitisSaati" type="time" class="form-control" value="@Model.BitisSaati" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="hidden" name="Aktif" value="false" />
+                        <input name="Aktif" type="checkbox" class="form-check-input" id="aktifCheck" value="true" @(Model.Aktif ? "checked" : "") />
+                        <label class="form-check-label" for="aktifCheck">Aktif</label>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="/Admin/Antrenor/Musaitlik/@Model.AntrenorId" class="btn btn-secondary">
+                            ❌ İptal
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            💾 Güncelle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

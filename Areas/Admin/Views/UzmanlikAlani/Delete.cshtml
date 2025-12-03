@@ -1,0 +1,81 @@
+﻿@model SporSalonu.Models.Entities.UzmanlikAlani
+
+@{
+    ViewData["Title"] = "Uzmanlık Alanı Sil";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">🗑️ Uzmanlık Alanı Sil</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <strong>⚠️ Dikkat!</strong> Bu uzmanlık alanını silmek istediğinizden emin misiniz?
+                </div>
+
+                <dl class="row">
+                    <dt class="col-sm-3">ID:</dt>
+                    <dd class="col-sm-9">@Model.Id</dd>
+
+                    <dt class="col-sm-3">Uzmanlık Alanı:</dt>
+                    <dd class="col-sm-9"><strong>@Model.Ad</strong></dd>
+
+                    <dt class="col-sm-3">Açıklama:</dt>
+                    <dd class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Aciklama))
+                        {
+                            @Model.Aciklama
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Antrenör Sayısı:</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge bg-info">@Model.AntrenorUzmanliklar.Count</span>
+                    </dd>
+                </dl>
+
+                @if (Model.AntrenorUzmanliklar.Any())
+                {
+                    <div class="alert alert-danger">
+                        <strong>⚠️ Uyarı:</strong> Bu uzmanlık alanına sahip <strong>@Model.AntrenorUzmanliklar.Count antrenör</strong> bulunmaktadır!
+                        <br>
+                        <small>Silme işlemi, antrenörlerden bu uzmanlık alanını kaldıracaktır.</small>
+                    </div>
+
+                    <h6>Etkilenecek Antrenörler:</h6>
+                    <ul>
+                        @foreach (var au in Model.AntrenorUzmanliklar.Take(5))
+                        {
+                            <li>@au.Antrenor?.AdSoyad</li>
+                        }
+                        @if (Model.AntrenorUzmanliklar.Count > 5)
+                        {
+                            <li class="text-muted">... ve @(Model.AntrenorUzmanliklar.Count - 5) antrenör daha</li>
+                        }
+                    </ul>
+                }
+
+                <hr>
+
+                <form method="post" action="/Admin/UzmanlikAlani/Delete/@Model.Id">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="/Admin/UzmanlikAlani/Index" class="btn btn-secondary">
+                            ❌ İptal
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            🗑️ Evet, Sil
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

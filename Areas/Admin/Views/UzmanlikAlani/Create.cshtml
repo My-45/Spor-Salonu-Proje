@@ -1,0 +1,50 @@
+﻿@model SporSalonu.Models.Entities.UzmanlikAlani
+
+@{
+    ViewData["Title"] = "Yeni Uzmanlık Alanı Ekle";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">➕ Yeni Uzmanlık Alanı Ekle</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" action="/Admin/UzmanlikAlani/Create">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Ad" class="form-label"></label>
+                        <input asp-for="Ad" class="form-control" placeholder="Örn: Fitness, Yoga, Pilates" />
+                        <span asp-validation-for="Ad" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Aciklama" class="form-label"></label>
+                        <textarea asp-for="Aciklama" class="form-control" rows="3" placeholder="Uzmanlık alanı hakkında kısa açıklama"></textarea>
+                        <span asp-validation-for="Aciklama" class="text-danger"></span>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="/Admin/UzmanlikAlani/Index" class="btn btn-secondary">
+                            ❌ İptal
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            ✅ Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,113 @@
+﻿@model IEnumerable<SporSalonu.Models.Entities.Antrenor>
+
+@{
+    ViewData["Title"] = "Antrenörler";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>👨‍🏫 Antrenörler</h2>
+    <a href="/Admin/Antrenor/Create" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Yeni Antrenör Ekle
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card shadow">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Ad Soyad</th>
+                        <th>Email</th>
+                        <th>Telefon</th>
+                        <th>Salon</th>
+                        <th>Uzmanlık Alanları</th>
+                        <th>Müsaitlik</th>
+                        <th>Durum</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td><strong>@item.AdSoyad</strong></td>
+                            <td>
+                                <a href="mailto:@item.Email">@item.Email</a>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Telefon))
+                                {
+                                    <a href="tel:@item.Telefon">@item.Telefon</a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-primary">@item.Salon?.Ad</span>
+                            </td>
+                            <td>
+                                @if (item.AntrenorUzmanliklar.Any())
+                                {
+                                    @foreach (var uz in item.AntrenorUzmanliklar)
+                                    {
+                                        <span class="badge bg-info me-1">@uz.UzmanlikAlani?.Ad</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Yok</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">@item.MusaitlikSaatleri.Count gün</span>
+                            </td>
+                            <td>
+                                @if (item.Aktif)
+                                {
+                                    <span class="badge bg-success">Aktif</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Pasif</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="/Admin/Antrenor/Details/@item.Id" class="btn btn-sm btn-info" title="Detay">
+                                        👁️
+                                    </a>
+                                    <a href="/Admin/Antrenor/Edit/@item.Id" class="btn btn-sm btn-warning" title="Düzenle">
+                                        ✏️
+                                    </a>
+                                    <a href="/Admin/Antrenor/Delete/@item.Id" class="btn btn-sm btn-danger" title="Sil">
+                                        🗑️
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">
+                Henüz antrenör eklenmemiş. <a href="/Admin/Antrenor/Create">İlk antrenörü eklemek için tıklayın.</a>
+            </div>
+        }
+    </div>
+</div>

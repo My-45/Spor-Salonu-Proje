@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+            .sidebar .nav-link {
+                color: rgba(255,255,255,0.8);
+                padding: 12px 20px;
+                border-radius: 5px;
+                margin: 5px 0;
+                transition: all 0.3s;
+            }
+
+                .sidebar .nav-link:hover, .sidebar .nav-link.active {
+                    background: rgba(255,255,255,0.1);
+                    color: white;
+                }
+
+        .admin-header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 col-lg-2 d-md-block sidebar p-3">
+                <div class="position-sticky">
+                    <h4 class="text-center mb-4">
+                        <i class="bi bi-gear-fill"></i> Admin Panel
+                    </h4>
+                    <hr class="bg-white">
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Admin/Admin/Index">
+                                📊 Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Admin/Salon/Index">
+                                🏢 Salonlar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Admin/Antrenor/Index">
+                                👨‍🏫 Antrenörler
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Admin/HizmetTuru/Index">
+                                💼 Hizmet Türleri
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Admin/UzmanlikAlani/Index">
+                                🎯 Uzmanlık Alanları
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Admin/Randevu/Index">
+                                📅 Randevular
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Admin/Users/Index">
+                                👥 Kullanıcılar
+                            </a>
+                        </li>
+                    </ul>
+
+                    <hr class="bg-white mt-4">
+
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                        🏠 Ana Sayfaya Dön
+                    </a>
+                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start">
+                            🚪 Çıkış Yap
+                        </button>
+                    </form>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
+                <div class="admin-header d-flex justify-content-between align-items-center py-3 mb-4">
+                    <h2>@ViewData["Title"]</h2>
+                    <div>
+                        <span class="badge bg-primary">Admin: @User.Identity?.Name</span>
+                    </div>
+                </div>
+
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,91 @@
+﻿@model IEnumerable<SporSalonu.Models.Entities.HizmetTuru>
+@{
+    ViewData["Title"] = "Hizmet Türleri";
+}
+
+<!-- Başarı Mesajı -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>✅ Başarılı!</strong> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Başlık -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>💼 Hizmet Türleri</h2>
+    <a href="/Admin/HizmetTuru/Create" class="btn btn-primary">
+        ➕ Yeni Hizmet Ekle
+    </a>
+</div>
+
+<!-- Hizmet Listesi -->
+<div class="card shadow">
+    <div class="card-body">
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Hizmet Adı</th>
+                            <th>Salon</th>
+                            <th>Süre (dk)</th>
+                            <th>Ücret (₺)</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td><strong>@item.Ad</strong></td>
+                                <td>
+                                    @if (item.Salon != null)
+                                    {
+                                        <span class="badge bg-info">@item.Salon.Ad</span>
+                                    }
+                                </td>
+                                <td>@item.Sure dk</td>
+                                <td>@item.Ucret.ToString("N2") ₺</td>
+                                <td>
+                                    @if (item.Aktif)
+                                    {
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Pasif</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="/Admin/HizmetTuru/Details/@item.Id" class="btn btn-sm btn-info" title="Detay">
+                                            👁️
+                                        </a>
+                                        <a href="/Admin/HizmetTuru/Edit/@item.Id" class="btn btn-sm btn-warning" title="Düzenle">
+                                            ✏️
+                                        </a>
+                                        <a href="/Admin/HizmetTuru/Delete/@item.Id" class="btn btn-sm btn-danger" title="Sil">
+                                            🗑️
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                <p class="mb-0">Henüz hizmet türü eklenmemiş. <a href="/Admin/HizmetTuru/Create" class="alert-link">İlk hizmeti eklemek için tıklayın.</a></p>
+            </div>
+        }
+    </div>
+</div>

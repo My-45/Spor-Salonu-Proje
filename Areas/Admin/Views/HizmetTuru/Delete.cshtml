@@ -1,0 +1,58 @@
+﻿@model SporSalonu.Models.Entities.HizmetTuru
+@{
+    ViewData["Title"] = "Hizmet Sil";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">🗑️ Hizmet Türü Sil</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <strong>⚠️ Uyarı!</strong> Bu hizmet türünü silmek istediğinizden emin misiniz?
+                </div>
+
+                <dl class="row">
+                    <dt class="col-sm-3">Hizmet Adı</dt>
+                    <dd class="col-sm-9"><strong>@Model.Ad</strong></dd>
+
+                    <dt class="col-sm-3">Açıklama</dt>
+                    <dd class="col-sm-9">@(Model.Aciklama ?? "Açıklama yok")</dd>
+
+                    <dt class="col-sm-3">Süre</dt>
+                    <dd class="col-sm-9">@Model.Sure dakika</dd>
+
+                    <dt class="col-sm-3">Ücret</dt>
+                    <dd class="col-sm-9">@Model.Ucret.ToString("N2") ₺</dd>
+
+                    <dt class="col-sm-3">Salon</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.Salon != null)
+                        {
+                            <span>@Model.Salon.Ad</span>
+                        }
+                    </dd>
+                </dl>
+
+                <hr>
+
+                <form action="/Admin/HizmetTuru/Delete/@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            🗑️ Evet, Sil
+                        </button>
+                        <a href="/Admin/HizmetTuru/Index" class="btn btn-secondary">
+                            ❌ İptal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+

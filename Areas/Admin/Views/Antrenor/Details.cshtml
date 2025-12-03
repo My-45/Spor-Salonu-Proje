@@ -1,0 +1,241 @@
+﻿@model SporSalonu.Models.Entities.Antrenor
+
+@{
+    ViewData["Title"] = "Antrenör Detayları";
+}
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">👁️ Antrenör Detayları</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">ID:</dt>
+                            <dd class="col-sm-8">@Model.Id</dd>
+
+                            <dt class="col-sm-4">Ad Soyad:</dt>
+                            <dd class="col-sm-8"><strong>@Model.AdSoyad</strong></dd>
+
+                            <dt class="col-sm-4">Email:</dt>
+                            <dd class="col-sm-8">
+                                <a href="mailto:@Model.Email">@Model.Email</a>
+                            </dd>
+
+                            <dt class="col-sm-4">Telefon:</dt>
+                            <dd class="col-sm-8">
+                                @if (!string.IsNullOrEmpty(Model.Telefon))
+                                {
+                                    <a href="tel:@Model.Telefon">@Model.Telefon</a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Belirtilmemiş</span>
+                                }
+                            </dd>
+
+                            <dt class="col-sm-4">Salon:</dt>
+                            <dd class="col-sm-8">
+                                <span class="badge bg-primary">@Model.Salon?.Ad</span>
+                            </dd>
+
+                            <dt class="col-sm-4">Durum:</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.Aktif)
+                                {
+                                    <span class="badge bg-success">Aktif</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Pasif</span>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6>Biyografi:</h6>
+                        <p class="text-muted">
+                            @if (!string.IsNullOrEmpty(Model.Biyografi))
+                            {
+                                @Model.Biyografi
+                            }
+                            else
+                            {
+                                <em>Biyografi bilgisi eklenmemiş.</em>
+                            }
+                        </p>
+
+                        <h6 class="mt-3">İstatistikler:</h6>
+                        <ul class="list-unstyled">
+                            <li>📊 Toplam Randevu: <strong>@Model.Randevular.Count</strong></li>
+                            <li>📅 Müsaitlik Günü: <strong>@Model.MusaitlikSaatleri.Count gün</strong></li>
+                            <li>🎯 Uzmanlık Sayısı: <strong>@Model.AntrenorUzmanliklar.Count</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Uzmanlık Alanları -->
+                <h5 class="mt-4">🎯 Uzmanlık Alanları</h5>
+                @if (Model.AntrenorUzmanliklar.Any())
+                {
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var uz in Model.AntrenorUzmanliklar)
+                        {
+                            <span class="badge bg-info fs-6">
+                                @uz.UzmanlikAlani?.Ad
+                            </span>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Henüz uzmanlık alanı atanmamış.</p>
+                }
+
+                <!-- Müsaitlik Saatleri -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h5 class="mb-0">📅 Müsaitlik Saatleri</h5>
+                    <a href="/Admin/Antrenor/Musaitlik/@Model.Id" class="btn btn-sm btn-primary">
+                        🕒 Müsaitlik Yönetimi
+                    </a>
+                </div>
+
+                @if (Model.MusaitlikSaatleri.Any())
+                {
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Gün</th>
+                                    <th>Başlangıç</th>
+                                    <th>Bitiş</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var musaitlik in Model.MusaitlikSaatleri.OrderBy(m => m.Gun))
+                                {
+                                    <tr>
+                                        <td>
+                                            @switch (musaitlik.Gun)
+                                            {
+                                                case DayOfWeek.Monday:
+                                                    <span>Pazartesi</span>
+                                                    break;
+                                                case DayOfWeek.Tuesday:
+                                                    <span>Salı</span>
+                                                    break;
+                                                case DayOfWeek.Wednesday:
+                                                    <span>Çarşamba</span>
+                                                    break;
+                                                case DayOfWeek.Thursday:
+                                                    <span>Perşembe</span>
+                                                    break;
+                                                case DayOfWeek.Friday:
+                                                    <span>Cuma</span>
+                                                    break;
+                                                case DayOfWeek.Saturday:
+                                                    <span>Cumartesi</span>
+                                                    break;
+                                                case DayOfWeek.Sunday:
+                                                    <span>Pazar</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>@musaitlik.BaslangicSaati.ToString(@"hh\:mm")</td>
+                                        <td>@musaitlik.BitisSaati.ToString(@"hh\:mm")</td>
+                                        <td>
+                                            @if (musaitlik.Aktif)
+                                            {
+                                                <span class="badge bg-success">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Pasif</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mt-3">Henüz müsaitlik saati tanımlanmamış.</p>
+                }
+
+                <!-- Son Randevular -->
+                <h5 class="mt-4">📋 Son Randevular (Son 5)</h5>
+                @if (Model.Randevular.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Üye</th>
+                                    <th>Hizmet</th>
+                                    <th>Tarih</th>
+                                    <th>Saat</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var randevu in Model.Randevular.OrderByDescending(r => r.RandevuTarihi).Take(5))
+                                {
+                                    <tr>
+                                        <td>@randevu.Uye?.AdSoyad</td>
+                                        <td>@randevu.HizmetTuru?.Ad</td>
+                                        <td>@randevu.RandevuTarihi.ToString("dd.MM.yyyy")</td>
+                                        <td>@randevu.RandevuSaati.ToString(@"hh\:mm")</td>
+                                        <td>
+                                            @switch (randevu.Durum)
+                                            {
+                                                case SporSalonu.Models.Entities.RandevuDurumu.Beklemede:
+                                                    <span class="badge bg-warning">Beklemede</span>
+                                                    break;
+                                                case SporSalonu.Models.Entities.RandevuDurumu.Onaylandi:
+                                                    <span class="badge bg-success">Onaylandı</span>
+                                                    break;
+                                                case SporSalonu.Models.Entities.RandevuDurumu.Tamamlandi:
+                                                    <span class="badge bg-info">Tamamlandı</span>
+                                                    break;
+                                                case SporSalonu.Models.Entities.RandevuDurumu.IptalEdildi:
+                                                    <span class="badge bg-danger">İptal</span>
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Henüz randevu bulunmuyor.</p>
+                }
+
+                <hr>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="/Admin/Antrenor/Index" class="btn btn-secondary">
+                        ⬅️ Geri
+                    </a>
+                    <a href="/Admin/Antrenor/Edit/@Model.Id" class="btn btn-warning">
+                        ✏️ Düzenle
+                    </a>
+                    <a href="/Admin/Antrenor/Delete/@Model.Id" class="btn btn-danger">
+                        🗑️ Sil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

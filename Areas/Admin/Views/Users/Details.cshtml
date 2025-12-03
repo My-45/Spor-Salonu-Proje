@@ -1,0 +1,174 @@
+﻿@model SporSalonu.Models.Entities.User
+
+@{
+    ViewData["Title"] = "Kullanıcı Detayları";
+    var roles = ViewBag.Roles as List<string>;
+    var randevular = ViewBag.Randevular as List<SporSalonu.Models.Entities.Randevu>;
+}
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">👁️ Kullanıcı Detayları</h4>
+            </div>
+            <div class="card-body">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Ad Soyad:</dt>
+                            <dd class="col-sm-8"><strong>@Model.AdSoyad</strong></dd>
+
+                            <dt class="col-sm-4">Email:</dt>
+                            <dd class="col-sm-8">
+                                <a href="mailto:@Model.Email">@Model.Email</a>
+                                @if (Model.EmailConfirmed)
+                                {
+                                    <span class="badge bg-success ms-2">✓</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning ms-2">⚠</span>
+                                }
+                            </dd>
+
+                            <dt class="col-sm-4">Kullanıcı Adı:</dt>
+                            <dd class="col-sm-8">@Model.UserName</dd>
+
+                            <dt class="col-sm-4">Kayıt Tarihi:</dt>
+                            <dd class="col-sm-8">@Model.KayitTarihi.ToString("dd MMMM yyyy HH:mm")</dd>
+                        </dl>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6>Roller:</h6>
+                        @if (roles != null && roles.Any())
+                        {
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach (var role in roles)
+                                {
+                                    if (role == "Admin")
+                                    {
+                                        <span class="badge bg-danger fs-6">👑 @role</span>
+                                    }
+                                    else if (role == "Uye")
+                                    {
+                                        <span class="badge bg-primary fs-6">👤 @role</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary fs-6">@role</span>
+                                    }
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted">Henüz rol atanmamış.</p>
+                        }
+
+                        <h6 class="mt-3">İstatistikler:</h6>
+                        <ul class="list-unstyled">
+                            <li>📊 Toplam Randevu: <strong>@(randevular?.Count ?? 0)</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Randevular -->
+                <h5 class="mt-4">📅 Randevular</h5>
+                @if (randevular != null && randevular.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Antrenör</th>
+                                    <th>Hizmet</th>
+                                    <th>Tarih</th>
+                                    <th>Saat</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var randevu in randevular.Take(10))
+                                {
+                                    <tr>
+                                        <td>@randevu.Antrenor?.AdSoyad</td>
+                                        <td>@randevu.HizmetTuru?.Ad</td>
+                                        <td>@randevu.RandevuTarihi.ToString("dd.MM.yyyy")</td>
+                                        <td>@randevu.RandevuSaati.ToString(@"hh\:mm")</td>
+                                        <td>
+                                            @switch (randevu.Durum)
+                                            {
+                                                case SporSalonu.Models.Entities.RandevuDurumu.Beklemede:
+                                                    <span class="badge bg-warning">Beklemede</span>
+                                                    break;
+                                                case SporSalonu.Models.Entities.RandevuDurumu.Onaylandi:
+                                                    <span class="badge bg-success">Onaylandı</span>
+                                                    break;
+                                                case SporSalonu.Models.Entities.RandevuDurumu.Tamamlandi:
+                                                    <span class="badge bg-info">Tamamlandı</span>
+                                                    break;
+                                                case SporSalonu.Models.Entities.RandevuDurumu.IptalEdildi:
+                                                    <span class="badge bg-danger">İptal</span>
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Henüz randevu bulunmuyor.</p>
+                }
+
+                <hr>
+
+                <div class="d-flex gap-2 justify-content-between">
+                    <a href="/Admin/Users/Index" class="btn btn-secondary">
+                        ⬅️ Geri
+                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="/Admin/Users/ManageRoles/@Model.Id" class="btn btn-warning">
+                            🔑 Rolleri Yönet
+                        </a>
+                        <form method="post" action="/Admin/Users/ToggleLockout/@Model.Id" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-warning">
+                                🔒 Kilitle/Aç
+                            </button>
+                        </form>
+                        <form method="post" action="/Admin/Users/Delete/@Model.Id" class="d-inline"
+                              onsubmit="return confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger">
+                                🗑️ Sil
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

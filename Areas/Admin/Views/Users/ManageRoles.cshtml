@@ -1,0 +1,90 @@
+﻿@model SporSalonu.Models.ViewModels.ManageRolesViewModel
+
+@{
+    ViewData["Title"] = "Rol Yönetimi";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-warning">
+                <h4 class="mb-0">🔑 Kullanıcı Rollerini Yönet</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>Kullanıcı:</strong> @Model.UserName<br>
+                    <strong>Email:</strong> @Model.UserEmail
+                </div>
+
+                <form method="post" action="/Admin/Users/ManageRoles">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="userId" value="@Model.UserId" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Roller:</label>
+                        <div class="border rounded p-3">
+                            @if (Model.Roles != null && Model.Roles.Any())
+                            {
+                                @foreach (var role in Model.Roles)
+                                {
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="selectedRoles"
+                                               value="@role.RoleName"
+                                               id="role_@role.RoleName"
+                                               @(role.IsSelected ? "checked" : "") />
+                                        <label class="form-check-label" for="role_@role.RoleName">
+                                            @if (role.RoleName == "Admin")
+                                            {
+                                                <strong class="text-danger">👑 @role.RoleName</strong>
+                                                <br>
+
+                                                <small class="text-muted">Tüm yetkilere sahip olur (Salon, Antrenör, Hizmet yönetimi)</small>
+                                            }
+                                            else if (role.RoleName == "Uye")
+                                            {
+                                                <strong class="text-primary">👤 @role.RoleName</strong>
+                                                <br>
+
+                                                <small class="text-muted">Randevu alabilir, randevularını görüntüleyebilir</small>
+                                            }
+                                            else
+                                            {
+                                                <strong>@role.RoleName</strong>
+                                            }
+                                        </label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted mb-0">Sistemde rol bulunmuyor.</p>
+                            }
+                        </div>
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i>
+                            Birden fazla rol seçebilirsiniz. Hiç rol seçilmezse kullanıcının erişimi kısıtlanır.
+                        </small>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Dikkat:</strong> Bir kullanıcıya Admin rolü verdiğinizde,
+                        tüm sistem yönetim yetkilerine sahip olacaktır!
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="/Admin/Users/Details/@Model.UserId" class="btn btn-secondary">
+                            ❌ İptal
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            💾 Rolleri Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

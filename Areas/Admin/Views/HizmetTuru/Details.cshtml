@@ -1,0 +1,74 @@
+﻿@model SporSalonu.Models.Entities.HizmetTuru
+@{
+    ViewData["Title"] = "Hizmet Detayı";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">👁️ Hizmet Türü Detayı</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">ID</dt>
+                    <dd class="col-sm-9">@Model.Id</dd>
+
+                    <dt class="col-sm-3">Hizmet Adı</dt>
+                    <dd class="col-sm-9"><strong>@Model.Ad</strong></dd>
+
+                    <dt class="col-sm-3">Açıklama</dt>
+                    <dd class="col-sm-9">@(Model.Aciklama ?? "Açıklama yok")</dd>
+
+                    <dt class="col-sm-3">Süre</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge bg-primary">@Model.Sure dakika</span>
+                    </dd>
+
+                    <dt class="col-sm-3">Ücret</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge bg-success">@Model.Ucret.ToString("N2") ₺</span>
+                    </dd>
+
+                    <dt class="col-sm-3">Salon</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.Salon != null)
+                        {
+                            <span class="badge bg-info">@Model.Salon.Ad</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Salon bilgisi yok</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Durum</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.Aktif)
+                        {
+                            <span class="badge bg-success">Aktif</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Pasif</span>
+                        }
+                    </dd>
+                </dl>
+
+                <hr>
+
+                <div class="d-flex gap-2">
+                    <a href="/Admin/HizmetTuru/Edit/@Model.Id" class="btn btn-warning">
+                        ✏️ Düzenle
+                    </a>
+                    <a href="/Admin/HizmetTuru/Delete/@Model.Id" class="btn btn-danger">
+                        🗑️ Sil
+                    </a>
+                    <a href="/Admin/HizmetTuru/Index" class="btn btn-secondary">
+                        ⬅️ Listeye Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

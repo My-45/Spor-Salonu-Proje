@@ -1,0 +1,106 @@
+﻿@model SporSalonu.Models.ViewModels.AntrenorViewModel
+
+@{
+    ViewData["Title"] = "Yeni Antrenör Ekle";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">➕ Yeni Antrenör Ekle</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" action="/Admin/Antrenor/Create">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="AdSoyad" class="form-label"></label>
+                        <input asp-for="AdSoyad" class="form-control" placeholder="Örn: Ahmet Yılmaz" />
+                        <span asp-validation-for="AdSoyad" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="email@example.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Telefon" class="form-label"></label>
+                            <input asp-for="Telefon" type="tel" class="form-control" placeholder="0555 123 45 67" />
+                            <span asp-validation-for="Telefon" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Biyografi" class="form-label"></label>
+                        <textarea asp-for="Biyografi" class="form-control" rows="3" placeholder="Antrenör hakkında kısa bilgi"></textarea>
+                        <span asp-validation-for="Biyografi" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="SalonId" class="form-label"></label>
+                        <select asp-for="SalonId" class="form-select" asp-items="ViewBag.Salonlar">
+                            <option value="">-- Salon Seçiniz --</option>
+                        </select>
+                        <span asp-validation-for="SalonId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Uzmanlık Alanları</label>
+                        <div class="border rounded p-3">
+                            @if (ViewBag.UzmanlikAlanlari != null)
+                            {
+                                @foreach (var uzmanlik in ViewBag.UzmanlikAlanlari)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"
+                                               name="SecilenUzmanliklar"
+                                               value="@uzmanlik.Id"
+                                               id="uzmanlik_@uzmanlik.Id" />
+                                        <label class="form-check-label" for="uzmanlik_@uzmanlik.Id">
+                                            @uzmanlik.Ad
+                                            @if (!string.IsNullOrEmpty(uzmanlik.Aciklama))
+                                            {
+                                                <small class="text-muted">- @uzmanlik.Aciklama</small>
+                                            }
+                                        </label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted mb-0">Henüz uzmanlık alanı eklenmemiş.</p>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input asp-for="Aktif" class="form-check-input" checked />
+                        <label asp-for="Aktif" class="form-check-label"></label>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="/Admin/Antrenor/Index" class="btn btn-secondary">
+                            ❌ İptal
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            ✅ Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

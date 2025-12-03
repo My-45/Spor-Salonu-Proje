@@ -1,0 +1,55 @@
+﻿@model SporSalonu.Models.Entities.Salon
+@{
+    ViewData["Title"] = "Salon Detayı";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">👁️ Salon Detayı</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">ID</dt>
+                    <dd class="col-sm-9">@Model.Id</dd>
+
+                    <dt class="col-sm-3">Salon Adı</dt>
+                    <dd class="col-sm-9">@Model.Ad</dd>
+
+                    <dt class="col-sm-3">Adres</dt>
+                    <dd class="col-sm-9">@Model.Adres</dd>
+
+                    <dt class="col-sm-3">Açılış Saati</dt>
+                    <dd class="col-sm-9">@Model.AcilisSaati.ToString(@"hh\:mm")</dd>
+
+                    <dt class="col-sm-3">Kapanış Saati</dt>
+                    <dd class="col-sm-9">@Model.KapanisSaati.ToString(@"hh\:mm")</dd>
+
+                    <dt class="col-sm-3">Durum</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.Aktif)
+                        {
+                            <span class="badge bg-success">Aktif</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Pasif</span>
+                        }
+                    </dd>
+                </dl>
+
+                <hr>
+
+                <div class="d-flex gap-2">
+                    <a href="/Admin/Salon/Edit/@Model.Id" class="btn btn-warning">
+                        ✏️ Düzenle
+                    </a>
+                    <a href="/Admin/Salon/Index" class="btn btn-secondary">
+                        ⬅️ Listeye Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

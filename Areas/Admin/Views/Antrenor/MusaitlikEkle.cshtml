@@ -1,0 +1,81 @@
+﻿@model SporSalonu.Models.ViewModels.MusaitlikSaatiViewModel
+@{
+    ViewData["Title"] = "Yeni Müsaitlik Ekle";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">➕ Yeni Müsaitlik Saati Ekle</h4>
+            </div>
+            <div class="card-body">
+                <form action="/Admin/Antrenor/MusaitlikEkle" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" name="AntrenorId" value="@Model.AntrenorId" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["Error"]
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label class="form-label">Gün *</label>
+                        <select name="Gun" class="form-select" required>
+                            <option value="">Gün Seçin</option>
+                            <option value="1">Pazartesi</option>
+                            <option value="2">Salı</option>
+                            <option value="3">Çarşamba</option>
+                            <option value="4">Perşembe</option>
+                            <option value="5">Cuma</option>
+                            <option value="6">Cumartesi</option>
+                            <option value="0">Pazar</option>
+                        </select>
+                        <small class="text-muted">Çalışılacak günü seçin</small>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Başlangıç Saati *</label>
+                            <input name="BaslangicSaati" type="time" class="form-control" value="@Model.BaslangicSaati" required />
+                            <small class="text-muted">Örn: 09:00</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Bitiş Saati *</label>
+                            <input name="BitisSaati" type="time" class="form-control" value="@Model.BitisSaati" required />
+                            <small class="text-muted">Örn: 18:00</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="hidden" name="Aktif" value="false" />
+                        <input name="Aktif" type="checkbox" class="form-check-input" id="aktifCheck" value="true" checked />
+                        <label class="form-check-label" for="aktifCheck">Aktif</label>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="/Admin/Antrenor/Musaitlik/@Model.AntrenorId" class="btn btn-secondary">
+                            ❌ İptal
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            ✅ Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

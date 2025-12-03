@@ -1,0 +1,80 @@
+﻿@model IEnumerable<SporSalonu.Models.Entities.UzmanlikAlani>
+
+@{
+    ViewData["Title"] = "Uzmanlık Alanları";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>🎯 Uzmanlık Alanları</h2>
+    <a href="/Admin/UzmanlikAlani/Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Yeni Uzmanlık Alanı Ekle
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card shadow">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Uzmanlık Alanı</th>
+                        <th>Açıklama</th>
+                        <th>Antrenör Sayısı</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td><strong>@item.Ad</strong></td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Aciklama))
+                                {
+                                    @item.Aciklama
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-info">@item.AntrenorUzmanliklar.Count</span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="/Admin/UzmanlikAlani/Details/@item.Id" class="btn btn-sm btn-info" title="Detay">
+                                        👁️
+                                    </a>
+                                    <a href="/Admin/UzmanlikAlani/Edit/@item.Id" class="btn btn-sm btn-warning" title="Düzenle">
+                                        ✏️
+                                    </a>
+                                    <a href="/Admin/UzmanlikAlani/Delete/@item.Id" class="btn btn-sm btn-danger" title="Sil">
+                                        🗑️
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">
+                Henüz uzmanlık alanı eklenmemiş. <a href="/Admin/UzmanlikAlani/Create">İlk uzmanlık alanını eklemek için tıklayın.</a>
+            </div>
+        }
+    </div>
+</div>

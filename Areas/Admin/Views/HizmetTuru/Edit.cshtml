@@ -1,0 +1,84 @@
+﻿@model SporSalonu.Models.ViewModels.HizmetTuruViewModel
+@{
+    ViewData["Title"] = "Hizmet Düzenle";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-white">
+                <h4 class="mb-0">✏️ Hizmet Türü Düzenle</h4>
+            </div>
+            <div class="card-body">
+                <form action="/Admin/HizmetTuru/Edit/@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" name="Id" value="@Model.Id" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Hizmet Adı *</label>
+                        <input name="Ad" value="@Model.Ad" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Açıklama</label>
+                        <textarea name="Aciklama" class="form-control" rows="3">@Model.Aciklama</textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Süre (Dakika) *</label>
+                            <input name="Sure" type="number" class="form-control" value="@Model.Sure" min="15" max="300" required />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Ücret (TL) *</label>
+                            <input name="Ucret" type="number" step="0.01" class="form-control" value="@Model.Ucret" min="0" required />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Salon *</label>
+                            <select name="SalonId" class="form-select" required>
+                                @if (ViewBag.Salonlar != null)
+                                {
+                                    @foreach (SelectListItem salon in ViewBag.Salonlar)
+                                    {
+                                        if (salon.Value == Model.SalonId.ToString())
+                                        {
+                                            <option value="@salon.Value" selected>@salon.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@salon.Value">@salon.Text</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="hidden" name="Aktif" value="false" />
+                        <input name="Aktif" type="checkbox" class="form-check-input" id="aktifCheck" value="true" @(Model.Aktif ? "checked" : "") />
+                        <label class="form-check-label" for="aktifCheck">Aktif</label>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="/Admin/HizmetTuru/Index" class="btn btn-secondary">
+                            ❌ İptal
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            💾 Güncelle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

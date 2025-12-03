@@ -1,0 +1,101 @@
+﻿@model SporSalonu.Models.Entities.UzmanlikAlani
+
+@{
+    ViewData["Title"] = "Uzmanlık Alanı Detayları";
+}
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">👁️ Uzmanlık Alanı Detayları</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">ID:</dt>
+                    <dd class="col-sm-9">@Model.Id</dd>
+
+                    <dt class="col-sm-3">Uzmanlık Alanı:</dt>
+                    <dd class="col-sm-9"><strong>@Model.Ad</strong></dd>
+
+                    <dt class="col-sm-3">Açıklama:</dt>
+                    <dd class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Aciklama))
+                        {
+                            @Model.Aciklama
+                        }
+                        else
+                        {
+                            <span class="text-muted">Açıklama eklenmemiş</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Antrenör Sayısı:</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge bg-info">@Model.AntrenorUzmanliklar.Count</span>
+                    </dd>
+                </dl>
+
+                <hr>
+
+                <!-- Bu Uzmanlığa Sahip Antrenörler -->
+                @if (Model.AntrenorUzmanliklar.Any())
+                {
+                    <h5 class="mt-4">👨‍🏫 Bu Uzmanlığa Sahip Antrenörler</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ad Soyad</th>
+                                    <th>Email</th>
+                                    <th>Telefon</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var au in Model.AntrenorUzmanliklar)
+                                {
+                                    <tr>
+                                        <td>@au.Antrenor?.AdSoyad</td>
+                                        <td>@au.Antrenor?.Email</td>
+                                        <td>@au.Antrenor?.Telefon</td>
+                                        <td>
+                                            @if (au.Antrenor?.Aktif == true)
+                                            {
+                                                <span class="badge bg-success">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Pasif</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        Bu uzmanlık alanına sahip antrenör bulunmuyor.
+                    </div>
+                }
+
+                <hr>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="/Admin/UzmanlikAlani/Index" class="btn btn-secondary">
+                        ⬅️ Geri
+                    </a>
+                    <a href="/Admin/UzmanlikAlani/Edit/@Model.Id" class="btn btn-warning">
+                        ✏️ Düzenle
+                    </a>
+                    <a href="/Admin/UzmanlikAlani/Delete/@Model.Id" class="btn btn-danger">
+                        🗑️ Sil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

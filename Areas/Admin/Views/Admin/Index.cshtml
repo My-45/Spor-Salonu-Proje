@@ -1,0 +1,136 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row">
+    <!-- İstatistik Değerler -->
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Salonlar</h5>
+                <p class="display-4">@ViewBag.SalonSayisi</p>
+                <a asp-controller="Salon" asp-action="Index" class="btn btn-light btn-sm">Detay</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Antrenörler</h5>
+                <p class="display-4">@ViewBag.AntrenorSayisi</p>
+                <a asp-controller="Antrenor" asp-action="Index" class="btn btn-light btn-sm">Detay</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Üyeler</h5>
+                <p class="display-4">@ViewBag.UyeSayisi</p>
+                <a asp-controller="Users" asp-action="Index" class="btn btn-light btn-sm">Detay</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Randevular</h5>
+                <p class="display-4">@ViewBag.RandevuSayisi</p>
+                <small>Bekleyen: @ViewBag.BekleyenRandevuSayisi</small><br>
+                <a asp-controller="Randevu" asp-action="Index" class="btn btn-light btn-sm mt-2">Detay</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Son Randevular -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Son Randevular</h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.SonRandevular.Count > 0)
+                {
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Üye</th>
+                                <th>Antrenör</th>
+                                <th>Hizmet</th>
+                                <th>Tarih</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var randevu in ViewBag.SonRandevular)
+                            {
+                                <tr>
+                                    <td>@randevu.Id</td>
+                                    <td>@randevu.Uye.AdSoyad</td>
+                                    <td>@randevu.Antrenor.AdSoyad</td>
+                                    <td>@randevu.HizmetTuru.Ad</td>
+                                    <td>@randevu.RandevuTarihi.ToString("dd.MM.yyyy")</td>
+                                    <td>
+                                        @if (randevu.Durum == SporSalonu.Models.Entities.RandevuDurumu.Beklemede)
+                                        {
+                                            <span class="badge bg-warning">Beklemede</span>
+                                        }
+                                        else if (randevu.Durum == SporSalonu.Models.Entities.RandevuDurumu.Onaylandi)
+                                        {
+                                            <span class="badge bg-success">Onaylandı</span>
+                                        }
+                                        else if (randevu.Durum == SporSalonu.Models.Entities.RandevuDurumu.Tamamlandi)
+                                        {
+                                            <span class="badge bg-info">Tamamlandı</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">İptal</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted">Henüz randevu bulunmuyor.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hızlı Erişim -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Hızlı Erişim</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2 d-md-flex">
+                    <a asp-controller="Salon" asp-action="Create" class="btn btn-primary">
+                        ➕ Yeni Salon Ekle
+                    </a>
+                    <a asp-controller="Antrenor" asp-action="Create" class="btn btn-success">
+                        ➕ Yeni Antrenör Ekle
+                    </a>
+                    <a asp-controller="HizmetTuru" asp-action="Create" class="btn btn-info">
+                        ➕ Yeni Hizmet Ekle
+                    </a>
+                    <a asp-controller="Randevu" asp-action="Index" class="btn btn-warning">
+                        📅 Tüm Randevular
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
