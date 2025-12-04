@@ -1,8 +1,633 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    :root {
+        --primary: #6366f1;
+        --secondary: #ec4899;
+        --success: #10b981;
+        --info: #06b6d4;
+        --warning: #f59e0b;
+    }
+
+    body {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border-radius: 20px;
+        padding: 4rem 2rem;
+        box-shadow: 0 20px 60px rgba(99, 102, 241, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920&q=80');
+            background-size: cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Stat Cards - 3D Hover Effect */
+    .stat-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+        border-radius: 16px;
+        padding: 2rem;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        transform-style: preserve-3d;
+        perspective: 1000px;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-15px) rotateX(5deg) rotateY(5deg) scale(1.05);
+            box-shadow: 0 25px 60px rgba(99, 102, 241, 0.25);
+        }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover .stat-icon {
+        transform: scale(1.2) rotate(5deg);
+    }
+
+    .stat-icon-1 {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    }
+
+    .stat-icon-2 {
+        background: linear-gradient(135deg, #ec4899, #f43f5e);
+    }
+
+    .stat-icon-3 {
+        background: linear-gradient(135deg, #10b981, #14b8a6);
+    }
+
+    /* Counter Animation */
+    .counter {
+        font-size: 2rem;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    /* Service Cards - 3D Effect */
+    .service-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        height: 100%;
+        transform-style: preserve-3d;
+        perspective: 1000px;
+    }
+
+        .service-card:hover {
+            transform: translateY(-12px) rotateX(3deg) scale(1.03);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+    .service-header {
+        height: 150px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .service-card:hover .service-header {
+        transform: scale(1.1);
+    }
+
+    .service-header::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent);
+        background-size: 20px 20px;
+        animation: move 4s linear infinite;
+    }
+
+   
+
+    {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 20px 20px;
+    }
+
+    }
+
+    .service-body {
+        padding: 1.5rem;
+    }
+
+    /* Coach Cards - 3D Effect */
+    .coach-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        height: 100%;
+        transform-style: preserve-3d;
+        perspective: 1000px;
+    }
+
+        .coach-card:hover {
+            transform: translateY(-12px) rotateY(5deg) scale(1.05);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+    .coach-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        transition: transform 0.3s ease;
+    }
+
+    .coach-card:hover .coach-avatar {
+        transform: scale(1.15) rotate(5deg);
+    }
+
+    /* Testimonials Carousel */
+    .testimonials-section {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        margin-bottom: 4rem;
+    }
+
+    .testimonial-carousel {
+        position: relative;
+        overflow: hidden;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .testimonial-track {
+        display: flex;
+        transition: transform 0.5s ease;
+    }
+
+    .testimonial-item {
+        min-width: 100%;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .testimonial-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+    }
+
+    .testimonial-text {
+        font-size: 1.1rem;
+        font-style: italic;
+        color: #555;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .testimonial-author {
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    .testimonial-rating {
+        color: #fbbf24;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .carousel-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .carousel-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ddd;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .carousel-dot.active {
+            background: var(--primary);
+            width: 30px;
+            border-radius: 6px;
+        }
+
+    /* Badge Styles */
+    .badge-custom {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .badge-outline {
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        background: rgba(99, 102, 241, 0.1);
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .price-badge {
+        background: linear-gradient(135deg, #10b981, #14b8a6);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border-radius: 20px;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+        margin-top: 4rem;
+        box-shadow: 0 20px 60px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Animations */
+    .fade-in {
+        animation: fadeIn 0.6s ease-in;
+    }
+
+   
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .glow {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        animation: glow 2s ease-in-out infinite alternate;
+    }
+
+   
+
+    {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+    }
+
+    to {
+        box-shadow: 0 0 40px rgba(236, 72, 153, 0.5);
+    }
+
+    }
+</style>
+
+<div class="container my-5">
+
+    <!-- Hero Section -->
+    <div class="hero-section mb-5 fade-in">
+        <div class="hero-content">
+            <div class="row align-items-center">
+                <div class="col-md-7 text-white">
+                    <h1 class="display-4 fw-bold mb-3">💪 Spor Salonu Yönetim Sistemi</h1>
+                    <p class="lead mb-4">
+                        Hedeflerinize ulaşmak için profesyonel destek!
+                        <span class="glow badge bg-white text-primary ms-2">✨ Yeni Üyelere %20 İndirim</span>
+                    </p>
+
+                    <div class="d-flex gap-3 flex-wrap">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a href="/Randevu/RandevuAl" class="btn btn-light btn-lg px-4 py-3">
+                                📅 Randevu Al
+                            </a>
+                            <a href="/Randevu/Randevularim" class="btn btn-outline-light btn-lg px-4 py-3">
+                                📋 Randevularım
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="/Account/Register" class="btn btn-light btn-lg px-4 py-3">
+                                ➕ Üye Ol
+                            </a>
+                            <a href="/Account/Login" class="btn btn-outline-light btn-lg px-4 py-3">
+                                🔑 Giriş Yap
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-5 text-center mt-4 mt-md-0">
+                    <div class="text-white">
+                        <div class="fs-1 mb-3">🏋️‍♀️</div>
+                        <h3 class="fw-bold"><span class="counter" data-target="@ViewBag.AntrenorSayisi">0</span>+</h3>
+                        <p class="mb-0">Profesyonel Antrenör</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4 fade-in" style="animation-delay: 0.1s;">
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-1">🏢</div>
+                <h2 class="counter fw-bold mb-2" data-target="@ViewBag.SalonSayisi">0</h2>
+                <p class="text-muted mb-0">Farklı Lokasyon</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 fade-in" style="animation-delay: 0.2s;">
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-2">👨‍🏫</div>
+                <h2 class="counter fw-bold mb-2" data-target="@ViewBag.AntrenorSayisi">0</h2>
+                <p class="text-muted mb-0">Sertifikalı Antrenör</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 fade-in" style="animation-delay: 0.3s;">
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-3">✨</div>
+                <h2 class="counter fw-bold mb-2" data-target="@ViewBag.HizmetSayisi">0</h2>
+                <p class="text-muted mb-0">Özel Program</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hizmetler -->
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">💼 Hizmetlerimiz</h2>
+            <p class="text-muted">Size özel tasarlanmış programlar</p>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var hizmet in ViewBag.Hizmetler)
+            {
+                <div class="col-md-4 fade-in">
+                    <div class="service-card">
+                        <div class="service-header">
+                            @switch (hizmet.Ad)
+                            {
+                                case var s when s.Contains("Kişisel"):
+                                    <span>🏋️</span>
+                                    break;
+                                case var s when s.Contains("Grup"):
+                                    <span>👥</span>
+                                    break;
+                                case var s when s.Contains("Yoga"):
+                                    <span>🧘</span>
+                                    break;
+                                default:
+                                    <span>💪</span>
+                                    break;
+                            }
+                        </div>
+                        <div class="service-body">
+                            <h5 class="fw-bold mb-3">@hizmet.Ad</h5>
+                            <p class="text-muted small mb-3">@hizmet.Aciklama</p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge-custom">⏱️ @hizmet.Sure dk</span>
+                                <span class="price-badge">@hizmet.Ucret.ToString("N2") ₺</span>
+                            </div>
+
+                            <hr>
+                            <small class="text-muted">📍 @hizmet.Salon?.Ad</small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Testimonials Section -->
+    <div class="testimonials-section fade-in">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">💬 Müşteri Yorumları</h2>
+            <p class="text-muted">Üyelerimiz ne diyor?</p>
+        </div>
+
+        <div class="testimonial-carousel">
+            <div class="testimonial-track" id="testimonialTrack">
+                <div class="testimonial-item">
+                    <div class="testimonial-avatar">👨</div>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">
+                        "3 ayda 15 kilo verdim! Antrenörler çok profesyonel ve yardımcı.
+                        Hayatımın en iyi kararını verdim."
+                    </p>
+                    <div class="testimonial-author">Mehmet Yılmaz</div>
+                    <small class="text-muted">Üye süresi: 6 ay</small>
+                </div>
+
+                <div class="testimonial-item">
+                    <div class="testimonial-avatar">👩</div>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">
+                        "Yoga dersleri harika! Hem fiziksel hem de mental olarak kendimi
+                        çok daha iyi hissediyorum. Kesinlikle tavsiye ederim."
+                    </p>
+                    <div class="testimonial-author">Ayşe Demir</div>
+                    <small class="text-muted">Üye süresi: 1 yıl</small>
+                </div>
+
+                <div class="testimonial-item">
+                    <div class="testimonial-avatar">👨‍💼</div>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">
+                        "Kişisel antrenman programı sayesinde kas kütlemi artırdım.
+                        Modern ekipmanlar ve temiz ortam. Mükemmel bir deneyim!"
+                    </p>
+                    <div class="testimonial-author">Burak Öztürk</div>
+                    <small class="text-muted">Üye süresi: 8 ay</small>
+                </div>
+            </div>
+
+            <div class="carousel-dots" id="carouselDots">
+                <span class="carousel-dot active" data-index="0"></span>
+                <span class="carousel-dot" data-index="1"></span>
+                <span class="carousel-dot" data-index="2"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Antrenörler -->
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">👨‍🏫 Antrenörlerimiz</h2>
+            <p class="text-muted">Alanında uzman eğitmenler</p>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var antrenor in ViewBag.Antrenorler)
+            {
+                <div class="col-md-4 fade-in">
+                    <div class="coach-card">
+                        <div class="coach-avatar">👤</div>
+                        <h5 class="fw-bold mb-2">@antrenor.AdSoyad</h5>
+                        <p class="text-muted small mb-3">@antrenor.Biyografi</p>
+
+                        <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
+                            @foreach (var uz in antrenor.AntrenorUzmanliklar)
+                            {
+                                <span class="badge-outline">@uz.UzmanlikAlani?.Ad</span>
+                            }
+                        </div>
+
+                        <small class="text-muted">📍 @antrenor.Salon?.Ad</small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="cta-section fade-in">
+        <h2 class="fw-bold mb-3">🚀 Hayalinizdeki Vücuda Kavuşun!</h2>
+        <p class="lead mb-4">Hemen üye olun ve ilk randevunuzda %20 indirim kazanın</p>
+        @if (User.Identity?.IsAuthenticated != true)
+        {
+            <a href="/Account/Register" class="btn btn-light btn-lg px-5 py-3">
+                Hemen Başla →
+            </a>
+        }
+    </div>
+
 </div>
+
+<script>
+    // Counter Animation
+    function animateCounter(element) {
+        const target = parseInt(element.getAttribute('data-target'));
+        const duration = 2000;
+        const increment = target / (duration / 16);
+        let current = 0;
+
+        const updateCounter = () => {
+            current += increment;
+            if (current < target) {
+                element.textContent = Math.floor(current);
+                requestAnimationFrame(updateCounter);
+            } else {
+                element.textContent = target;
+            }
+        };
+
+        updateCounter();
+    }
+
+    // Testimonial Carousel
+    let currentSlide = 0;
+    const testimonialTrack = document.getElementById('testimonialTrack');
+    const dots = document.querySelectorAll('.carousel-dot');
+    const totalSlides = 3;
+
+    function updateCarousel() {
+        testimonialTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSlide);
+        });
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateCarousel();
+    }
+
+    // Auto-advance carousel
+    setInterval(nextSlide, 5000);
+
+    // Manual dot navigation
+    dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            currentSlide = parseInt(dot.getAttribute('data-index'));
+            updateCarousel();
+        });
+    });
+
+    // Initialize counters when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+        const counters = document.querySelectorAll('.counter');
+
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        counters.forEach(counter => observer.observe(counter));
+    });
+</script>

@@ -1,32 +1,47 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using SporSalonu.Models;
+using Microsoft.EntityFrameworkCore;
+using SporSalonu.Data;
 
 namespace SporSalonu.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            // Ana sayfa için veriler
+            ViewBag.SalonSayisi = await _context.Salonlar.CountAsync();
+            ViewBag.AntrenorSayisi = await _context.Antrenorler.CountAsync();
+            ViewBag.HizmetSayisi = await _context.HizmetTurleri.CountAsync();
+
+            // Antrenörler 
+            ViewBag.Antrenorler = await _context.Antrenorler
+                .Include(a => a.Salon)
+                .Include(a => a.AntrenorUzmanliklar)
+                    .ThenInclude(au => au.UzmanlikAlani)
+                .Where(a => a.Aktif)
+                .Take(3)
+                .ToListAsync();
+
+            // Hizmetler
+            ViewBag.Hizmetler = await _context.HizmetTurleri
+                .Include(h => h.Salon)
+                .Where(h => h.Aktif)
+                .Take(6)
+                .ToListAsync();
+
             return View();
         }
 
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

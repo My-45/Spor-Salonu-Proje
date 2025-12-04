@@ -152,3 +152,4 @@ C:\Users\Merve\source\repos\SporSalonu\SporSalonu\obj\Debug\net8.0\refint\SporSa
 C:\Users\Merve\source\repos\SporSalonu\SporSalonu\obj\Debug\net8.0\SporSalonu.pdb
 C:\Users\Merve\source\repos\SporSalonu\SporSalonu\obj\Debug\net8.0\SporSalonu.genruntimeconfig.cache
 C:\Users\Merve\source\repos\SporSalonu\SporSalonu\obj\Debug\net8.0\ref\SporSalonu.dll
+C:\Users\Merve\source\repos\SporSalonu\SporSalonu\obj\Debug\net8.0\SporSalonu.sourcelink.json
