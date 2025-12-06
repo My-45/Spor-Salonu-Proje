@@ -1,0 +1,177 @@
+﻿@model IEnumerable<SporSalonu.Models.Entities.Randevu>
+
+@{
+    ViewData["Title"] = "Bugünkü Randevular";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>🕐 Bugünkü Randevular</h2>
+    <a href="/Admin/Randevu/Index" class="btn btn-secondary">
+        ⬅️ Tüm Randevular
+    </a>
+</div>
+
+<div class="alert alert-info">
+    <strong>📅 Tarih:</strong> @ViewBag.Tarih.ToString("dd MMMM yyyy, dddd")
+</div>
+
+@if (!Model.Any())
+{
+    <div class="card shadow">
+        <div class="card-body text-center py-5">
+            <div class="mb-4" style="font-size: 4rem; opacity: 0.5;">📅</div>
+            <h4 class="text-muted">Bugün için randevu bulunmuyor</h4>
+            <p class="text-muted">Sistem boşta, dinlenme zamanı! 😊</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var randevu in Model)
+        {
+            var simdi = DateTime.Now.TimeOfDay;
+            var randevuSonu = randevu.RandevuSaati.Add(TimeSpan.FromMinutes(randevu.HizmetTuru?.Sure ?? 60));
+            var aktif = simdi >= randevu.RandevuSaati && simdi < randevuSonu;
+            var gecmis = simdi >= randevuSonu;
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm @(aktif ? "border-success border-3" : "")">
+                    <div class="card-header @(aktif ? "bg-success text-white" : gecmis ? "bg-secondary text-white" : "bg-light")">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong class="fs-5">@randevu.RandevuSaati.ToString(@"hh\:mm")</strong>
+                            @if (aktif)
+                            {
+                                <span class="badge bg-white text-success">🔴 ŞU AN AKTİF</span>
+                            }
+                            else if (gecmis)
+                            {
+                                <span class="badge bg-dark">✓ Geçti</span>
+                            }
+                            else
+                            {
+                                @switch (randevu.Durum)
+                                {
+                                    case RandevuDurumu.Beklemede:
+                                        <span class="badge bg-warning">⏳</span>
+                                        break;
+                                    case RandevuDurumu.Onaylandi:
+                                        <span class="badge bg-success">✅</span>
+                                        break;
+                                    case RandevuDurumu.Tamamlandi:
+                                        <span class="badge bg-info">✔️</span>
+                                        break;
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <h6 class="mb-3">
+                            <strong>👤 @randevu.Uye?.AdSoyad</strong>
+                        </h6>
+
+                        <ul class="list-unstyled mb-3">
+                            <li class="mb-2">
+                                <strong>👨‍🏫 Antrenör:</strong><br>
+                                @randevu.Antrenor?.AdSoyad
+                            </li>
+                            <li class="mb-2">
+                                <strong>💼 Hizmet:</strong><br>
+                                @randevu.HizmetTuru?.Ad
+                            </li>
+                            <li class="mb-2">
+                                <strong>⏱️ Süre:</strong> @randevu.HizmetTuru?.Sure dk
+                            </li>
+                            <li class="mb-2">
+                                <strong>🏢 Salon:</strong> @randevu.Antrenor?.Salon?.Ad
+                            </li>
+                            <li>
+                                <strong>💰 Ücret:</strong>
+                                <span class="text-success fw-bold">@randevu.HizmetTuru?.Ucret.ToString("N2") ₺</span>
+                            </li>
+                        </ul>
+
+                        <div class="d-flex gap-2">
+                            <a href="/Admin/Randevu/Details/@randevu.Id" class="btn btn-sm btn-info flex-fill">
+                                👁️ Detay
+                            </a>
+
+                            @if (randevu.Durum == RandevuDurumu.Beklemede)
+                            {
+                                <form method="post" action="/Admin/Randevu/Onayla/@randevu.Id" class="flex-fill">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-success w-100">
+                                        ✅ Onayla
+                                    </button>
+                                </form>
+                            }
+
+                            @if (randevu.Durum == RandevuDurumu.Onaylandi && !aktif && !gecmis)
+                            {
+                                <form method="post" action="/Admin/Randevu/Tamamla/@randevu.Id" class="flex-fill">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-info w-100">
+                                        ✔️ Tamamla
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-transparent border-0 text-center">
+                        <small class="text-muted">
+                            Bitiş: @randevuSonu.ToString(@"hh\:mm")
+                        </small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Özet İstatistikler -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="mb-0">@Model.Count()</h3>
+                    <small class="text-muted">Toplam Randevu</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="mb-0 text-success">@Model.Count(r => r.Durum == RandevuDurumu.Onaylandi)</h3>
+                    <small class="text-muted">Onaylanmış</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="mb-0 text-warning">@Model.Count(r => r.Durum == RandevuDurumu.Beklemede)</h3>
+                    <small class="text-muted">Bekliyor</small>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    
+
+    {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    }
+
+    .border-success.border-3 {
+        animation: pulse 2s infinite;
+    }
+</style>

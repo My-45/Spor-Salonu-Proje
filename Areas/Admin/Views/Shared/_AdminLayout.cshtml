@@ -7,102 +7,283 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        body {
+            background: #f5f7fa;
         }
 
-            .sidebar .nav-link {
-                color: rgba(255,255,255,0.8);
-                padding: 12px 20px;
-                border-radius: 5px;
-                margin: 5px 0;
-                transition: all 0.3s;
+        /* Sidebar - Modern Gradient */
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            color: white;
+            box-shadow: 4px 0 20px rgba(99, 102, 241, 0.2);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+            .sidebar-header h4 {
+                font-weight: 700;
+                margin: 0;
+                font-size: 1.3rem;
             }
 
-                .sidebar .nav-link:hover, .sidebar .nav-link.active {
-                    background: rgba(255,255,255,0.1);
-                    color: white;
-                }
+            .sidebar-header .admin-badge {
+                background: rgba(255, 255, 255, 0.2);
+                padding: 0.3rem 0.8rem;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                margin-top: 0.5rem;
+                display: inline-block;
+            }
 
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            padding: 0.9rem 1.5rem;
+            border-radius: 8px;
+            margin: 0.3rem 1rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+            .sidebar .nav-link:hover {
+                background: rgba(255, 255, 255, 0.15);
+                color: white;
+                transform: translateX(5px);
+            }
+
+            .sidebar .nav-link.active {
+                background: rgba(255, 255, 255, 0.25);
+                color: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+        .sidebar hr {
+            border-color: rgba(255, 255, 255, 0.2);
+            margin: 1rem 1.5rem;
+        }
+
+        /* Top Header - Modern */
         .admin-header {
             background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.2rem 2rem;
+            margin-left: 260px;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(90deg, #6366f1, #ec4899) 1;
+        }
+
+            .admin-header h2 {
+                font-weight: 700;
+                color: #1e293b;
+                margin: 0;
+                font-size: 1.5rem;
+            }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .admin-name {
+            display: flex;
+            flex-direction: column;
+        }
+
+            .admin-name strong {
+                color: #1e293b;
+                font-size: 0.95rem;
+            }
+
+            .admin-name small {
+                color: #64748b;
+                font-size: 0.8rem;
+            }
+
+        .badge-admin {
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Main Content */
+        main {
+            margin-left: 260px;
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Logout Button */
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            transition: all 0.3s ease;
+        }
+
+            .btn-logout:hover {
+                background: #ef4444;
+                color: white;
+                border-color: #ef4444;
+            }
+
+        /* Menu Icons */
+        .menu-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .sidebar
+
+        {
+            width: 0;
+            overflow: hidden;
+        }
+
+        main, .admin-header {
+            margin-left: 0;
+        }
+
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-2 col-lg-2 d-md-block sidebar p-3">
-                <div class="position-sticky">
-                    <h4 class="text-center mb-4">
-                        <i class="bi bi-gear-fill"></i> Admin Panel
-                    </h4>
-                    <hr class="bg-white">
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h4>🎯 Admin Panel</h4>
+                <div class="admin-badge">Yönetim Paneli</div>
+            </div>
 
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Admin/Admin/Index">
-                                📊 Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Admin/Salon/Index">
-                                🏢 Salonlar
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Admin/Antrenor/Index">
-                                👨‍🏫 Antrenörler
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Admin/HizmetTuru/Index">
-                                💼 Hizmet Türleri
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Admin/UzmanlikAlani/Index">
-                                🎯 Uzmanlık Alanları
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Admin/Randevu/Index">
-                                📅 Randevular
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Admin/Users/Index">
-                                👥 Kullanıcılar
-                            </a>
-                        </li>
-                    </ul>
+            <div class="sidebar-menu mt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Admin/Admin/Index">
+                            <span class="menu-icon">📊</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Admin/Salon/Index">
+                            <span class="menu-icon">🏢</span>
+                            <span>Salonlar</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Admin/Antrenor/Index">
+                            <span class="menu-icon">👨‍🏫</span>
+                            <span>Antrenörler</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Admin/HizmetTuru/Index">
+                            <span class="menu-icon">💼</span>
+                            <span>Hizmet Türleri</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Admin/UzmanlikAlani/Index">
+                            <span class="menu-icon">🎯</span>
+                            <span>Uzmanlık Alanları</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Admin/Randevu/Index">
+                            <span class="menu-icon">📅</span>
+                            <span>Randevular</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Admin/Users/Index">
+                            <span class="menu-icon">👥</span>
+                            <span>Kullanıcılar</span>
+                        </a>
+                    </li>
+                </ul>
 
-                    <hr class="bg-white mt-4">
+                <hr>
 
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-                        🏠 Ana Sayfaya Dön
-                    </a>
-                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
-                        <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start">
-                            🚪 Çıkış Yap
-                        </button>
-                    </form>
-                </div>
-            </nav>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <span class="menu-icon">🏠</span>
+                            <span>Ana Sayfaya Dön</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="/Account/Logout" method="post" style="margin: 0;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="nav-link border-0 w-100 text-start" style="background: transparent; cursor: pointer; color: rgba(255, 255, 255, 0.85); padding: 0.9rem 1.5rem; border-radius: 8px; margin: 0.3rem 1rem; transition: all 0.3s ease; font-weight: 500; display: flex; align-items: center; gap: 0.7rem;">
+                                <span class="menu-icon">🚪</span>
+                                <span>Çıkış Yap</span>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-            <!-- Main Content -->
-            <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
-                <div class="admin-header d-flex justify-content-between align-items-center py-3 mb-4">
+        <!-- Main Content Area -->
+        <div class="flex-grow-1">
+            <!-- Top Header -->
+            <div class="admin-header d-flex justify-content-between align-items-center">
+                <div>
                     <h2>@ViewData["Title"]</h2>
-                    <div>
-                        <span class="badge bg-primary">Admin: @User.Identity?.Name</span>
-                    </div>
                 </div>
+                <div class="admin-user-info">
+                    <div class="admin-avatar">👤</div>
+                    <div class="admin-name">
+                        <strong>@User.Identity?.Name</strong>
+                        <small>Sistem Yöneticisi</small>
+                    </div>
+                    <span class="badge-admin">Admin</span>
+                </div>
+            </div>
 
+            <!-- Page Content -->
+            <main>
                 @RenderBody()
             </main>
         </div>
@@ -112,5 +293,17 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        // Active menu highlight
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

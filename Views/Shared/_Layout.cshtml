@@ -3,41 +3,107 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Spor Salonu Yönetim Sistemi</title>
+    <title>@ViewData["Title"] - Spor Salonu</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/SporSalonu.styles.css" asp-append-version="true" />
+    <style>
+        /* Modern Navbar Styles */
+        .navbar-custom {
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            padding: 1rem 0;
+        }
+
+            .navbar-custom .navbar-brand {
+                color: white !important;
+                font-weight: 700;
+                font-size: 1.5rem;
+                transition: transform 0.3s ease;
+            }
+
+                .navbar-custom .navbar-brand:hover {
+                    transform: scale(1.05);
+                }
+
+            .navbar-custom .nav-link {
+                color: rgba(255, 255, 255, 0.9) !important;
+                font-weight: 500;
+                margin: 0 0.5rem;
+                padding: 0.5rem 1rem !important;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+
+                .navbar-custom .nav-link:hover {
+                    background: rgba(255, 255, 255, 0.2);
+                    color: white !important;
+                }
+
+        .dropdown-menu-custom {
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: none;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-item {
+            padding: 0.7rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+            .dropdown-item:hover {
+                background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-custom navbar-dark">
             <div class="container-fluid">
+                <!-- Logo -->
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <strong>💪 Spor Salonu</strong>
+                    💪 Spor Salonu
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+                <!-- Menu Items -->
+                <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                🏠 Ana Sayfa
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Gizlilik</a>
-                        </li>
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Randevu" asp-action="RandevuAl">
+                                    📅 Randevu Al
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Randevu" asp-action="Randevularim">
+                                    📋 Randevularım
+                                </a>
+                            </li>
+                        }
                     </ul>
 
-                    <!-- User Authentication Menu -->
+                    <!-- User Menu -->
                     <ul class="navbar-nav ms-auto">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
                                     👤 @User.Identity.Name
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom" aria-labelledby="navbarDropdown">
                                     @if (User.IsInRole("Admin"))
                                     {
                                         <li>
@@ -48,13 +114,13 @@
                                         <li><hr class="dropdown-divider"></li>
                                     }
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" asp-area="" asp-controller="Randevu" asp-action="Randevularim">
                                             📅 Randevularım
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
-                                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                                             <button type="submit" class="dropdown-item">
                                                 🚪 Çıkış Yap
                                             </button>
@@ -66,12 +132,12 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Login">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">
                                     🔑 Giriş Yap
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link btn btn-primary text-white ms-2" asp-controller="Account" asp-action="Register">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Register">
                                     ➕ Üye Ol
                                 </a>
                             </li>
@@ -82,16 +148,17 @@
         </nav>
     </header>
 
+    <!-- Main Content -->
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
+    <!-- Footer -->
     <footer class="border-top footer text-muted mt-5">
         <div class="container text-center py-3">
-            &copy; 2025 - Spor Salonu Yönetim Sistemi -
-            <a asp-area="" asp-controller="Home" asp-action="Privacy">Gizlilik Politikası</a>
+            &copy; 2025 - Spor Salonu Yönetim Sistemi
         </div>
     </footer>
 

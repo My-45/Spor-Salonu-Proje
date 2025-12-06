@@ -1,0 +1,297 @@
+﻿@model SporSalonu.Models.ViewModels.RandevuAlViewModel
+
+@{
+    ViewData["Title"] = "Randevu Al";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient text-white text-center py-4" style="background: linear-gradient(135deg, #6366f1, #ec4899);">
+                    <h2 class="mb-0">📅 Randevu Al</h2>
+                    <p class="mb-0 mt-2">Antrenörünüzü seçin ve randevunuzu oluşturun</p>
+                </div>
+
+                <div class="card-body p-4">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>❌ Hata!</strong> @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" id="randevuForm">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <!-- Adım 1: Salon Seçimi -->
+                        <div class="step-section mb-4">
+                            <h5 class="mb-3">
+                                <span class="badge bg-primary rounded-circle me-2">1</span>
+                                Salon Seçin
+                            </h5>
+                            <select asp-for="SalonId" class="form-select form-select-lg" id="salonSelect">
+                                <option value="">-- Salon Seçiniz --</option>
+                                @foreach (var salon in ViewBag.Salonlar)
+                                {
+                                    <option value="@salon.Value">@salon.Text</option>
+                                }
+                            </select>
+                            <span asp-validation-for="SalonId" class="text-danger"></span>
+                        </div>
+
+                        <!-- Adım 2: Antrenör Seçimi -->
+                        <div class="step-section mb-4" id="antrenorSection" style="display: none;">
+                            <h5 class="mb-3">
+                                <span class="badge bg-primary rounded-circle me-2">2</span>
+                                Antrenör Seçin
+                            </h5>
+                            <div id="antrenorCards" class="row g-3">
+                                <div class="col-12 text-center text-muted">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Yükleniyor...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" asp-for="AntrenorId" id="antrenorId" />
+                            <span asp-validation-for="AntrenorId" class="text-danger"></span>
+                        </div>
+
+                        <!-- Adım 3: Hizmet Seçimi -->
+                        <div class="step-section mb-4" id="hizmetSection" style="display: none;">
+                            <h5 class="mb-3">
+                                <span class="badge bg-primary rounded-circle me-2">3</span>
+                                Hizmet Seçin
+                            </h5>
+                            <div id="hizmetCards" class="row g-3">
+                                <!-- JavaScript ile doldurulacak -->
+                            </div>
+                            <input type="hidden" asp-for="HizmetTuruId" id="hizmetId" />
+                            <span asp-validation-for="HizmetTuruId" class="text-danger"></span>
+                        </div>
+
+                        <!-- Adım 4: Tarih Seçimi -->
+                        <div class="step-section mb-4" id="tarihSection" style="display: none;">
+                            <h5 class="mb-3">
+                                <span class="badge bg-primary rounded-circle me-2">4</span>
+                                Tarih Seçin
+                            </h5>
+                            <input asp-for="RandevuTarihi" type="date" class="form-control form-control-lg" id="tarihInput" />
+                            <span asp-validation-for="RandevuTarihi" class="text-danger"></span>
+                        </div>
+
+                        <!-- Adım 5: Saat Seçimi -->
+                        <div class="step-section mb-4" id="saatSection" style="display: none;">
+                            <h5 class="mb-3">
+                                <span class="badge bg-primary rounded-circle me-2">5</span>
+                                Saat Seçin
+                            </h5>
+                            <div id="saatButtons" class="d-flex flex-wrap gap-2">
+                                <!-- JavaScript ile doldurulacak -->
+                            </div>
+                            <input type="hidden" asp-for="RandevuSaati" id="saatInput" />
+                            <span asp-validation-for="RandevuSaati" class="text-danger"></span>
+                        </div>
+
+                        <!-- Özet -->
+                        <div id="ozetSection" style="display: none;">
+                            <div class="alert alert-info">
+                                <h5 class="alert-heading">📋 Randevu Özeti</h5>
+                                <hr>
+                                <p class="mb-1"><strong>Salon:</strong> <span id="ozetSalon"></span></p>
+                                <p class="mb-1"><strong>Antrenör:</strong> <span id="ozetAntrenor"></span></p>
+                                <p class="mb-1"><strong>Hizmet:</strong> <span id="ozetHizmet"></span></p>
+                                <p class="mb-1"><strong>Tarih:</strong> <span id="ozetTarih"></span></p>
+                                <p class="mb-1"><strong>Saat:</strong> <span id="ozetSaat"></span></p>
+                                <p class="mb-0"><strong>Ücret:</strong> <span id="ozetUcret"></span> ₺</p>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-lg btn-success">
+                                    ✅ Randevuyu Onayla
+                                </button>
+                                <a href="/Home/Index" class="btn btn-lg btn-secondary">
+                                    ❌ İptal
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        let secilenSalon, secilenAntrenor, secilenHizmet, secilenTarih, secilenSaat;
+        let secilenHizmetDetay = {};
+
+        // Salon değiştiğinde
+        $('#salonSelect').change(function() {
+            const salonId = $(this).val();
+            if (!salonId) return;
+
+            secilenSalon = $(this).find('option:selected').text();
+
+            // Antrenörleri getir
+            $('#antrenorSection').show();
+            $('#antrenorCards').html('<div class="col-12 text-center"><div class="spinner-border"></div></div>');
+
+            $.get('/Randevu/GetAntrenorler', { salonId: salonId }, function(data) {
+                let html = '';
+                data.forEach(antrenor => {
+                    html += `
+                        <div class="col-md-6">
+                            <div class="antrenor-card" data-id="${antrenor.id}" data-name="${antrenor.adSoyad}">
+                                <div class="card h-100 shadow-sm border-0" style="cursor: pointer;">
+                                    <div class="card-body text-center">
+                                        <div class="avatar mb-3" style="width: 60px; height: 60px; margin: 0 auto; background: linear-gradient(135deg, #6366f1, #ec4899); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                                            👤
+                                        </div>
+                                        <h6 class="mb-0">${antrenor.adSoyad}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                $('#antrenorCards').html(html);
+
+                // Antrenör seçimi
+                $('.antrenor-card').click(function() {
+                    $('.antrenor-card .card').removeClass('border-primary border-3');
+                    $(this).find('.card').addClass('border-primary border-3');
+
+                    const antrenorId = $(this).data('id');
+                    secilenAntrenor = $(this).data('name');
+                    $('#antrenorId').val(antrenorId);
+
+                    // Hizmetleri getir
+                    loadHizmetler(salonId);
+                });
+            });
+        });
+
+        function loadHizmetler(salonId) {
+            $('#hizmetSection').show();
+            $('#hizmetCards').html('<div class="col-12 text-center"><div class="spinner-border"></div></div>');
+
+            $.get('/Randevu/GetHizmetler', { salonId: salonId }, function(data) {
+                let html = '';
+                data.forEach(hizmet => {
+                    html += `
+                        <div class="col-md-6">
+                            <div class="hizmet-card" data-id="${hizmet.id}" data-name="${hizmet.ad}" data-sure="${hizmet.sure}" data-ucret="${hizmet.ucret}">
+                                <div class="card h-100 shadow-sm border-0" style="cursor: pointer;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">${hizmet.ad}</h6>
+                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                            <span class="badge bg-primary">⏱️ ${hizmet.sure} dk</span>
+                                            <strong class="text-success">${hizmet.ucret} ₺</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                $('#hizmetCards').html(html);
+
+                // Hizmet seçimi
+                $('.hizmet-card').click(function() {
+                    $('.hizmet-card .card').removeClass('border-success border-3');
+                    $(this).find('.card').addClass('border-success border-3');
+
+                    const hizmetId = $(this).data('id');
+                    secilenHizmet = $(this).data('name');
+                    secilenHizmetDetay = {
+                        sure: $(this).data('sure'),
+                        ucret: $(this).data('ucret')
+                    };
+                    $('#hizmetId').val(hizmetId);
+
+                    // Tarih seçimini göster
+                    $('#tarihSection').show();
+
+                    // Minimum tarih: yarın
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    $('#tarihInput').attr('min', tomorrow.toISOString().split('T')[0]);
+                });
+            });
+        }
+
+        // Tarih seçildiğinde
+        $('#tarihInput').change(function() {
+            const tarih = $(this).val();
+            const antrenorId = $('#antrenorId').val();
+
+            if (!tarih || !antrenorId) return;
+
+            secilenTarih = tarih;
+
+            // Müsait saatleri getir
+            $('#saatSection').show();
+            $('#saatButtons').html('<div class="spinner-border spinner-border-sm"></div>');
+
+            $.get('/Randevu/GetMusaitSaatler', { antrenorId: antrenorId, tarih: tarih }, function(response) {
+                if (response.success) {
+                    let html = '';
+                    response.saatler.forEach(saat => {
+                        html += `
+                            <button type="button" class="btn btn-outline-primary saat-btn" data-saat="${saat}">
+                                ${saat}
+                            </button>
+                        `;
+                    });
+                    $('#saatButtons').html(html || '<p class="text-danger">Bu gün için müsait saat yok</p>');
+
+                    // Saat seçimi
+                    $('.saat-btn').click(function() {
+                        $('.saat-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+                        $(this).removeClass('btn-outline-primary').addClass('btn-primary');
+
+                        secilenSaat = $(this).data('saat');
+                        $('#saatInput').val(secilenSaat);
+
+                        // Özeti göster
+                        showOzet();
+                    });
+                } else {
+                    $('#saatButtons').html(`<p class="text-danger">${response.message}</p>`);
+                }
+            });
+        });
+
+        function showOzet() {
+            $('#ozetSalon').text(secilenSalon);
+            $('#ozetAntrenor').text(secilenAntrenor);
+            $('#ozetHizmet').text(secilenHizmet);
+            $('#ozetTarih').text(new Date(secilenTarih).toLocaleDateString('tr-TR'));
+            $('#ozetSaat').text(secilenSaat);
+            $('#ozetUcret').text(secilenHizmetDetay.ucret);
+            $('#ozetSection').show();
+        }
+    </script>
+}
+
+<style>
+    .step-section {
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        border-left: 4px solid #6366f1;
+    }
+
+    .antrenor-card .card:hover, .hizmet-card .card:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+    }
+</style>

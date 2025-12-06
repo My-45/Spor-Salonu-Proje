@@ -1,0 +1,187 @@
+﻿@model SporSalonu.Models.Entities.Randevu
+
+@{
+    ViewData["Title"] = "Randevu Detayları";
+    var isPast = Model.RandevuTarihi.Date < DateTime.Today;
+    var isToday = Model.RandevuTarihi.Date == DateTime.Today;
+}
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card shadow">
+            <div class="card-header text-white d-flex justify-content-between align-items-center"
+                 style="background: @(Model.Durum switch {
+                     RandevuDurumu.Beklemede => "linear-gradient(135deg, #f59e0b, #fbbf24)",
+                     RandevuDurumu.Onaylandi => "linear-gradient(135deg, #10b981, #14b8a6)",
+                     RandevuDurumu.Tamamlandi => "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                     RandevuDurumu.IptalEdildi => "linear-gradient(135deg, #ef4444, #f87171)",
+                     _ => "#6c757d"
+                 });">
+                <h4 class="mb-0">📋 Randevu Detayları</h4>
+                @if (isToday)
+                {
+                    <span class="badge bg-danger">BUGÜN</span>
+                }
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <!-- Sol Kolon -->
+                    <div class="col-md-6">
+                        <h5 class="mb-3">👤 Üye Bilgileri</h5>
+                        <div class="bg-light p-3 rounded mb-4">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Ad Soyad:</dt>
+                                <dd class="col-sm-8"><strong>@Model.Uye?.AdSoyad</strong></dd>
+
+                                <dt class="col-sm-4">Email:</dt>
+                                <dd class="col-sm-8">
+                                    <a href="mailto:@Model.Uye?.Email">@Model.Uye?.Email</a>
+                                </dd>
+
+                                <dt class="col-sm-4">Kayıt Tarihi:</dt>
+                                <dd class="col-sm-8">@Model.Uye?.KayitTarihi.ToString("dd.MM.yyyy")</dd>
+                            </dl>
+                        </div>
+
+                        <h5 class="mb-3">👨‍🏫 Antrenör Bilgileri</h5>
+                        <div class="bg-light p-3 rounded mb-4">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Antrenör:</dt>
+                                <dd class="col-sm-8"><strong>@Model.Antrenor?.AdSoyad</strong></dd>
+
+                                <dt class="col-sm-4">Email:</dt>
+                                <dd class="col-sm-8">@Model.Antrenor?.Email</dd>
+
+                                <dt class="col-sm-4">Telefon:</dt>
+                                <dd class="col-sm-8">@Model.Antrenor?.Telefon</dd>
+
+                                <dt class="col-sm-4">Salon:</dt>
+                                <dd class="col-sm-8">
+                                    <span class="badge bg-primary">📍 @Model.Antrenor?.Salon?.Ad</span>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <!-- Sağ Kolon -->
+                    <div class="col-md-6">
+                        <h5 class="mb-3">📅 Randevu Bilgileri</h5>
+                        <div class="bg-light p-3 rounded mb-4">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Randevu ID:</dt>
+                                <dd class="col-sm-8"><strong>#@Model.Id</strong></dd>
+
+                                <dt class="col-sm-4">Tarih:</dt>
+                                <dd class="col-sm-8">
+                                    <strong>@Model.RandevuTarihi.ToString("dd MMMM yyyy, dddd")</strong>
+                                </dd>
+
+                                <dt class="col-sm-4">Saat:</dt>
+                                <dd class="col-sm-8">
+                                    <strong class="fs-5">@Model.RandevuSaati.ToString(@"hh\:mm")</strong>
+                                </dd>
+
+                                <dt class="col-sm-4">Durum:</dt>
+                                <dd class="col-sm-8">
+                                    @switch (Model.Durum)
+                                    {
+                                        case RandevuDurumu.Beklemede:
+                                            <span class="badge bg-warning fs-6">⏳ Onay Bekliyor</span>
+                                            break;
+                                        case RandevuDurumu.Onaylandi:
+                                            <span class="badge bg-success fs-6">✅ Onaylandı</span>
+                                            break;
+                                        case RandevuDurumu.Tamamlandi:
+                                            <span class="badge bg-info fs-6">✔️ Tamamlandı</span>
+                                            break;
+                                        case RandevuDurumu.IptalEdildi:
+                                            <span class="badge bg-danger fs-6">❌ İptal Edildi</span>
+                                            break;
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-4">Oluşturulma:</dt>
+                                <dd class="col-sm-8">@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</dd>
+                            </dl>
+                        </div>
+
+                        <h5 class="mb-3">💼 Hizmet Bilgileri</h5>
+                        <div class="bg-light p-3 rounded">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Hizmet:</dt>
+                                <dd class="col-sm-8"><strong>@Model.HizmetTuru?.Ad</strong></dd>
+
+                                <dt class="col-sm-4">Açıklama:</dt>
+                                <dd class="col-sm-8">@Model.HizmetTuru?.Aciklama</dd>
+
+                                <dt class="col-sm-4">Süre:</dt>
+                                <dd class="col-sm-8">
+                                    <span class="badge bg-primary">⏱️ @Model.HizmetTuru?.Sure dakika</span>
+                                </dd>
+
+                                <dt class="col-sm-4">Ücret:</dt>
+                                <dd class="col-sm-8">
+                                    <strong class="text-success fs-5">@Model.HizmetTuru?.Ucret.ToString("N2") ₺</strong>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Notlar))
+                {
+                    <div class="alert alert-info mt-4">
+                        <strong>📝 Notlar:</strong><br>
+                        @Model.Notlar
+                    </div>
+                }
+
+                <hr>
+
+                <!-- İşlem Butonları -->
+                <div class="d-flex gap-2 justify-content-between">
+                    <a href="/Admin/Randevu/Index" class="btn btn-secondary">
+                        ⬅️ Geri
+                    </a>
+
+                    <div class="d-flex gap-2">
+                        @if (Model.Durum == RandevuDurumu.Beklemede)
+                        {
+                            <form method="post" action="/Admin/Randevu/Onayla/@Model.Id" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-success">
+                                    ✅ Onayla
+                                </button>
+                            </form>
+                            <form method="post" action="/Admin/Randevu/Reddet/@Model.Id" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger">
+                                    ❌ Reddet
+                                </button>
+                            </form>
+                        }
+
+                        @if (Model.Durum == RandevuDurumu.Onaylandi)
+                        {
+                            <form method="post" action="/Admin/Randevu/Tamamla/@Model.Id" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-info">
+                                    ✔️ Tamamlandı İşaretle
+                                </button>
+                            </form>
+                        }
+
+                        <form method="post" action="/Admin/Randevu/Delete/@Model.Id" class="d-inline"
+                              onsubmit="return confirm('Bu randevuyu silmek istediğinizden emin misiniz?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger">
+                                🗑️ Sil
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

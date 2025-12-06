@@ -1,0 +1,230 @@
+﻿@model IEnumerable<SporSalonu.Models.Entities.Randevu>
+
+@{
+    ViewData["Title"] = "Randevu Yönetimi";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>📅 Randevu Yönetimi</h2>
+    <a href="/Admin/Randevu/Bugun" class="btn btn-info">
+        🕐 Bugünkü Randevular
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- İstatistikler -->
+<div class="row g-3 mb-4">
+    <div class="col-md">
+        <div class="card text-center h-100 @(ViewBag.AktifFiltre == "" ? "border-primary" : "")">
+            <div class="card-body">
+                <h3 class="mb-0">@ViewBag.ToplamRandevu</h3>
+                <small class="text-muted">Toplam Randevu</small>
+                <a href="/Admin/Randevu/Index" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="card text-center h-100 @(ViewBag.AktifFiltre == "Beklemede" ? "border-warning" : "")">
+            <div class="card-body">
+                <h3 class="mb-0 text-warning">@ViewBag.BekleyenRandevu</h3>
+                <small class="text-muted">⏳ Bekleyen</small>
+                <a href="/Admin/Randevu/Index?durum=Beklemede" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="card text-center h-100 @(ViewBag.AktifFiltre == "Onaylandi" ? "border-success" : "")">
+            <div class="card-body">
+                <h3 class="mb-0 text-success">@ViewBag.OnaylananRandevu</h3>
+                <small class="text-muted">✅ Onaylanan</small>
+                <a href="/Admin/Randevu/Index?durum=Onaylandi" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="card text-center h-100 @(ViewBag.AktifFiltre == "Tamamlandi" ? "border-info" : "")">
+            <div class="card-body">
+                <h3 class="mb-0 text-info">@ViewBag.TamamlananRandevu</h3>
+                <small class="text-muted">✔️ Tamamlanan</small>
+                <a href="/Admin/Randevu/Index?durum=Tamamlandi" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="card text-center h-100 @(ViewBag.AktifFiltre == "IptalEdildi" ? "border-danger" : "")">
+            <div class="card-body">
+                <h3 class="mb-0 text-danger">@ViewBag.IptalEdilenRandevu</h3>
+                <small class="text-muted">❌ İptal</small>
+                <a href="/Admin/Randevu/Index?durum=IptalEdildi" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Randevu Listesi -->
+<div class="card shadow">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Üye</th>
+                        <th>Antrenör</th>
+                        <th>Hizmet</th>
+                        <th>Tarih</th>
+                        <th>Saat</th>
+                        <th>Durum</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var randevu in Model)
+                    {
+                        var isPast = randevu.RandevuTarihi.Date < DateTime.Today;
+                        var isToday = randevu.RandevuTarihi.Date == DateTime.Today;
+
+                        <tr class="@(isToday ? "table-info" : "")">
+                            <td>@randevu.Id</td>
+                            <td>
+                                <strong>@randevu.Uye?.AdSoyad</strong><br>
+                                <small class="text-muted">@randevu.Uye?.Email</small>
+                            </td>
+                            <td>
+                                @randevu.Antrenor?.AdSoyad<br>
+                                <small class="text-muted">📍 @randevu.Antrenor?.Salon?.Ad</small>
+                            </td>
+                            <td>
+                                @randevu.HizmetTuru?.Ad<br>
+                                <small class="text-muted">⏱️ @randevu.HizmetTuru?.Sure dk</small>
+                            </td>
+                            <td>
+                                @randevu.RandevuTarihi.ToString("dd.MM.yyyy")<br>
+                                @if (isToday)
+                                {
+                                    <span class="badge bg-danger">BUGÜN</span>
+                                }
+                                else if (isPast)
+                                {
+                                    <span class="badge bg-secondary">GEÇMİŞ</span>
+                                }
+                            </td>
+                            <td>
+                                <strong>@randevu.RandevuSaati.ToString(@"hh\:mm")</strong>
+                            </td>
+                            <td>
+                                @switch (randevu.Durum)
+                                {
+                                    case RandevuDurumu.Beklemede:
+                                        <span class="badge bg-warning">⏳ Beklemede</span>
+                                        break;
+                                    case RandevuDurumu.Onaylandi:
+                                        <span class="badge bg-success">✅ Onaylandı</span>
+                                        break;
+                                    case RandevuDurumu.Tamamlandi:
+                                        <span class="badge bg-info">✔️ Tamamlandı</span>
+                                        break;
+                                    case RandevuDurumu.IptalEdildi:
+                                        <span class="badge bg-danger">❌ İptal</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="/Admin/Randevu/Details/@randevu.Id"
+                                       class="btn btn-sm btn-info" title="Detay">
+                                        👁️
+                                    </a>
+
+                                    @if (randevu.Durum == RandevuDurumu.Beklemede)
+                                    {
+                                        <form method="post" action="/Admin/Randevu/Onayla/@randevu.Id" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-success" title="Onayla">
+                                                ✅
+                                            </button>
+                                        </form>
+                                        <form method="post" action="/Admin/Randevu/Reddet/@randevu.Id" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Reddet">
+                                                ❌
+                                            </button>
+                                        </form>
+                                    }
+
+                                    @if (randevu.Durum == RandevuDurumu.Onaylandi)
+                                    {
+                                        <form method="post" action="/Admin/Randevu/Tamamla/@randevu.Id" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-info" title="Tamamla">
+                                                ✔️
+                                            </button>
+                                        </form>
+                                    }
+
+                                    <form method="post" action="/Admin/Randevu/Delete/@randevu.Id" class="d-inline"
+                                          onsubmit="return confirm('Bu randevuyu silmek istediğinizden emin misiniz?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Sil">
+                                            🗑️
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info text-center">
+                @if (!string.IsNullOrEmpty(ViewBag.AktifFiltre))
+                {
+                    <p class="mb-0">Bu durumda randevu bulunmuyor.</p>
+                }
+                else
+                {
+                    <p class="mb-0">Henüz randevu bulunmuyor.</p>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .card {
+        position: relative;
+    }
+
+        .card .stretched-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+</style>

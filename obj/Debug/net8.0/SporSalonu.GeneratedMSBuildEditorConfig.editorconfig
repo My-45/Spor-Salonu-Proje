@@ -76,6 +76,18 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcSGl6bWV0VHVydVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Areas/Admin/Views/Randevu/Bugun.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcUmFuZGV2dVxCdWd1bi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Areas/Admin/Views/Randevu/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcUmFuZGV2dVxEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Areas/Admin/Views/Randevu/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcUmFuZGV2dVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Areas/Admin/Views/Salon/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2Fsb25cQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -158,6 +170,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Views/Randevu/RandevuAl.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmFuZGV2dVxSYW5kZXZ1QWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Views/Randevu/Randevularim.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmFuZGV2dVxSYW5kZXZ1bGFyaW0uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Views/Shared/Error.cshtml]
