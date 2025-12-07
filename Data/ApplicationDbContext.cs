@@ -20,7 +20,7 @@ namespace SporSalonu.Data
         public DbSet<HizmetTuru> HizmetTurleri { get; set; }
         public DbSet<MusaitlikSaati> MusaitlikSaatleri { get; set; }
         public DbSet<Randevu> Randevular { get; set; }
-
+        public DbSet<Yorum> Yorumlar { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
