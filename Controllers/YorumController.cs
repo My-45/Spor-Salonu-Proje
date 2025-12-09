@@ -20,16 +20,32 @@ namespace SporSalonu.Controllers
             _userManager = userManager;
         }
 
-        // GET: Yorum/YorumYap
-        public IActionResult YorumYap()
+        // GET: Yorum/Olustur
+        public async Task<IActionResult> Olustur()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Kullanıcının daha önce yorum yapıp yapmadığını kontrol et
+            var mevcutYorum = await _context.Yorumlar
+                .FirstOrDefaultAsync(y => y.UyeId == user.Id);
+
+            if (mevcutYorum != null)
+            {
+                TempData["Info"] = "Zaten bir yorumunuz bulunmaktadır. Yorumlarım sayfasından görüntüleyebilirsiniz.";
+                return RedirectToAction(nameof(Yorumlarim));
+            }
+
             return View();
         }
 
-        // POST: Yorum/YorumYap
+        // POST: Yorum/Olustur
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> YorumYap(YorumViewModel model)
+        public async Task<IActionResult> Olustur(YorumViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -46,7 +62,7 @@ namespace SporSalonu.Controllers
                 if (mevcutYorum != null)
                 {
                     TempData["Error"] = "Zaten bir yorumunuz bulunmaktadır. Her kullanıcı sadece bir yorum yapabilir.";
-                    return View(model);
+                    return RedirectToAction(nameof(Yorumlarim));
                 }
 
                 var yorum = new Yorum

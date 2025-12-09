@@ -139,16 +139,14 @@
         animation: move 4s linear infinite;
     }
 
-   
+    @@keyframes move {
+        0% {
+            background-position: 0 0;
+        }
 
-    {
-        background-position: 0 0;
-    }
-
-    100% {
-        background-position: 20px 20px;
-    }
-
+        100% {
+            background-position: 20px 20px;
+        }
     }
 
     .service-body {
@@ -315,17 +313,16 @@
         animation: fadeIn 0.6s ease-in;
     }
 
-   
-    {
-        opacity: 0;
-        transform: translateY(20px);
-    }
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .glow {
@@ -333,16 +330,14 @@
         animation: glow 2s ease-in-out infinite alternate;
     }
 
-   
+    @@keyframes glow {
+        from {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
 
-    {
-        box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
-    }
-
-    to {
-        box-shadow: 0 0 40px rgba(236, 72, 153, 0.5);
-    }
-
+        to {
+            box-shadow: 0 0 40px rgba(236, 72, 153, 0.5);
+        }
     }
 </style>
 
@@ -466,55 +461,153 @@
         </div>
     </div>
 
-    <!-- Testimonials Section -->
+    <!-- Yorumlar Section - DİNAMİK KULLANICI YORUMLARI -->
     <div class="testimonials-section fade-in">
         <div class="text-center mb-4">
-            <h2 class="fw-bold">💬 Müşteri Yorumları</h2>
-            <p class="text-muted">Üyelerimiz ne diyor?</p>
+            <h2 class="fw-bold">💬 Üyelerimiz Ne Diyor?</h2>
+            <p class="text-muted">Gerçek kullanıcı deneyimleri</p>
         </div>
 
-        <div class="testimonial-carousel">
-            <div class="testimonial-track" id="testimonialTrack">
-                <div class="testimonial-item">
-                    <div class="testimonial-avatar">👨</div>
-                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-                    <p class="testimonial-text">
-                        "3 ayda 15 kilo verdim! Antrenörler çok profesyonel ve yardımcı.
-                        Hayatımın en iyi kararını verdim."
-                    </p>
-                    <div class="testimonial-author">Mehmet Yılmaz</div>
-                    <small class="text-muted">Üye süresi: 6 ay</small>
+        @if (ViewBag.Yorumlar != null && ((List<SporSalonu.Models.Entities.Yorum>)ViewBag.Yorumlar).Any())
+        {
+            var yorumlar = (List<SporSalonu.Models.Entities.Yorum>)ViewBag.Yorumlar;
+            var carouselYorumlar = yorumlar.Take(3).ToList();
+
+            <!-- Carousel Yorumlar -->
+            <div class="testimonial-carousel">
+                <div class="testimonial-track" id="testimonialTrack">
+                    @for (int i = 0; i < carouselYorumlar.Count; i++)
+                    {
+                        var yorum = carouselYorumlar[i];
+                        <div class="testimonial-item">
+                            <div class="testimonial-avatar">
+                                @{
+                                    var displayName = yorum.Uye?.AdSoyad ?? yorum.Uye?.UserName ?? "U";
+                                    var initial = displayName.Length > 0 ? displayName.Substring(0, 1).ToUpper() : "👤";
+                                }
+                                @initial
+                            </div>
+                            <div class="testimonial-rating">
+                                @for (int j = 1; j <= 5; j++)
+                                {
+                                    if (j <= yorum.Puan)
+                                    {
+                                        <span>⭐</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="opacity: 0.3;">⭐</span>
+                                    }
+                                }
+                            </div>
+                            <p class="testimonial-text">
+                                "@yorum.Icerik"
+                            </p>
+                            <div class="testimonial-author">@(yorum.Uye?.AdSoyad ?? yorum.Uye?.UserName ?? "Anonim Üye")</div>
+                            <small class="text-muted">
+                                📅 @yorum.OlusturmaTarihi.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))
+                            </small>
+                        </div>
+                    }
                 </div>
 
-                <div class="testimonial-item">
-                    <div class="testimonial-avatar">👩</div>
-                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-                    <p class="testimonial-text">
-                        "Yoga dersleri harika! Hem fiziksel hem de mental olarak kendimi
-                        çok daha iyi hissediyorum. Kesinlikle tavsiye ederim."
-                    </p>
-                    <div class="testimonial-author">Ayşe Demir</div>
-                    <small class="text-muted">Üye süresi: 1 yıl</small>
-                </div>
-
-                <div class="testimonial-item">
-                    <div class="testimonial-avatar">👨‍💼</div>
-                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-                    <p class="testimonial-text">
-                        "Kişisel antrenman programı sayesinde kas kütlemi artırdım.
-                        Modern ekipmanlar ve temiz ortam. Mükemmel bir deneyim!"
-                    </p>
-                    <div class="testimonial-author">Burak Öztürk</div>
-                    <small class="text-muted">Üye süresi: 8 ay</small>
-                </div>
+                @if (carouselYorumlar.Count > 1)
+                {
+                    <div class="carousel-dots" id="carouselDots">
+                        @for (int i = 0; i < carouselYorumlar.Count; i++)
+                        {
+                            <span class="carousel-dot @(i == 0 ? "active" : "")" data-index="@i"></span>
+                        }
+                    </div>
+                }
             </div>
 
-            <div class="carousel-dots" id="carouselDots">
-                <span class="carousel-dot active" data-index="0"></span>
-                <span class="carousel-dot" data-index="1"></span>
-                <span class="carousel-dot" data-index="2"></span>
+            <!-- Diğer Yorumlar (Grid) -->
+            @if (yorumlar.Count > 3)
+            {
+                <div class="row g-4 mt-4">
+                    @foreach (var yorum in yorumlar.Skip(3))
+                    {
+                        <div class="col-md-4">
+                            <div class="card h-100 shadow-sm" style="border-radius: 16px; border: 1px solid rgba(99, 102, 241, 0.1);">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="mb-0 fw-bold">
+                                            <span style="background: linear-gradient(135deg, #6366f1, #ec4899); color: white; width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px;">
+                                                @{
+                                                    var displayName2 = yorum.Uye?.AdSoyad ?? yorum.Uye?.UserName ?? "U";
+                                                    var initial2 = displayName2.Length > 0 ? displayName2.Substring(0, 1).ToUpper() : "👤";
+                                                }
+                                                @initial2
+                                            </span>
+                                            @(yorum.Uye?.AdSoyad ?? yorum.Uye?.UserName ?? "Anonim Üye")
+                                        </h6>
+                                        <div style="color: #fbbf24;">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= yorum.Puan)
+                                                {
+                                                    <span>⭐</span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="opacity: 0.3;">⭐</span>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                    <p class="text-muted mb-3" style="font-style: italic;">
+                                        "@yorum.Icerik"
+                                    </p>
+                                    <small class="text-muted">
+                                        📅 @yorum.OlusturmaTarihi.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <!-- Yorum Yap Butonu -->
+            <div class="text-center mt-5">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a href="/Yorum/Olustur" class="btn btn-primary btn-lg px-5 py-3" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; border-radius: 12px;">
+                        ✍️ Siz de Yorum Yapın
+                    </a>
+                }
+                else
+                {
+                    <p class="text-muted mb-3">Yorum yapmak için giriş yapmalısınız</p>
+                    <a href="/Account/Login" class="btn btn-outline-primary btn-lg px-4 py-3" style="border-radius: 12px;">
+                        🔑 Giriş Yap
+                    </a>
+                }
             </div>
-        </div>
+        }
+        else
+        {
+            <!-- Henüz Yorum Yok -->
+            <div class="text-center py-5">
+                <div style="font-size: 4rem; opacity: 0.3;">💬</div>
+                <h4 class="text-muted mt-3">Henüz yorum yapılmamış</h4>
+                <p class="text-muted">İlk yorumu siz yapın ve deneyiminizi paylaşın!</p>
+
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a href="/Yorum/Olustur" class="btn btn-primary btn-lg px-5 py-3 mt-3" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; border-radius: 12px;">
+                        ✍️ İlk Yorumu Yap
+                    </a>
+                }
+                else
+                {
+                    <a href="/Account/Login" class="btn btn-outline-primary btn-lg px-4 py-3 mt-3" style="border-radius: 12px;">
+                        🔑 Giriş Yapın
+                    </a>
+                }
+            </div>
+        }
     </div>
 
     <!-- Antrenörler -->
@@ -582,34 +675,38 @@
         updateCounter();
     }
 
-    // Testimonial Carousel
+    // Testimonial Carousel - Dinamik
     let currentSlide = 0;
     const testimonialTrack = document.getElementById('testimonialTrack');
     const dots = document.querySelectorAll('.carousel-dot');
-    const totalSlides = 3;
+    const totalSlides = dots.length; // Dinamik olarak yorum sayısını al
 
-    function updateCarousel() {
-        testimonialTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
-        dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentSlide);
-        });
-    }
+    if (testimonialTrack && totalSlides > 0) {
+        function updateCarousel() {
+            testimonialTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
 
-    function nextSlide() {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        updateCarousel();
-    }
-
-    // Auto-advance carousel
-    setInterval(nextSlide, 5000);
-
-    // Manual dot navigation
-    dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-            currentSlide = parseInt(dot.getAttribute('data-index'));
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
             updateCarousel();
+        }
+
+        // Auto-advance carousel (sadece birden fazla yorum varsa)
+        if (totalSlides > 1) {
+            setInterval(nextSlide, 5000);
+        }
+
+        // Manual dot navigation
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                currentSlide = parseInt(dot.getAttribute('data-index'));
+                updateCarousel();
+            });
         });
-    });
+    }
 
     // Initialize counters when page loads
     window.addEventListener('DOMContentLoaded', () => {

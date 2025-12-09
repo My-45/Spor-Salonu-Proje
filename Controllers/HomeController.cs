@@ -36,6 +36,14 @@ namespace SporSalonu.Controllers
                 .Take(6)
                 .ToListAsync();
 
+            // YORUMLAR - Onaylanmýþ yorumlarý getir
+            ViewBag.Yorumlar = await _context.Yorumlar
+                .Include(y => y.Uye)
+                .Where(y => y.Onaylandi == true)
+                .OrderByDescending(y => y.OlusturmaTarihi)
+                .Take(6) // En fazla 6 yorum göster
+                .ToListAsync();
+
             return View();
         }
 

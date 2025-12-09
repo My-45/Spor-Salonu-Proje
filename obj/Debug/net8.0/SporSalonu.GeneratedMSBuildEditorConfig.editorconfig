@@ -144,6 +144,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVXptYW5saWtBbGFuaVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Areas/Admin/Views/YorumAdmin/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcWW9ydW1BZG1pblxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Areas/Admin/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -186,6 +190,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Views/Yorum/Olustur.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcWW9ydW1cT2x1c3R1ci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Views/Yorum/Yorumlarim.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcWW9ydW1cWW9ydW1sYXJpbS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Merve/source/repos/SporSalonu/SporSalonu/Views/_ViewImports.cshtml]

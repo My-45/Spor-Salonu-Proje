@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - Admin Panel</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         body {
             background: #f5f7fa;
@@ -55,6 +56,7 @@
             display: flex;
             align-items: center;
             gap: 0.7rem;
+            position: relative;
         }
 
             .sidebar .nav-link:hover {
@@ -72,6 +74,31 @@
         .sidebar hr {
             border-color: rgba(255, 255, 255, 0.2);
             margin: 1rem 1.5rem;
+        }
+
+        /* Bekleyen Yorum Badge */
+        .badge-bekleyen {
+            background: #fbbf24;
+            color: #1e293b;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: auto;
+            animation: pulse 2s infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100%
+
+        {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.6;
+        }
+
         }
 
         /* Top Header - Modern */
@@ -236,6 +263,16 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="/Admin/YorumAdmin/Index">
+                            <span class="menu-icon">💬</span>
+                            <span>Yorum Yönetimi</span>
+                            @if (ViewBag.BekleyenYorumSayisi != null && ViewBag.BekleyenYorumSayisi > 0)
+                            {
+                                <span class="badge-bekleyen">@ViewBag.BekleyenYorumSayisi</span>
+                            }
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="/Admin/Users/Index">
                             <span class="menu-icon">👥</span>
                             <span>Kullanıcılar</span>
@@ -297,9 +334,10 @@
     <script>
         // Active menu highlight
         document.addEventListener('DOMContentLoaded', function() {
-            const currentPath = window.location.pathname;
+            const currentPath = window.location.pathname.toLowerCase();
             document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
+                const linkPath = link.getAttribute('href')?.toLowerCase();
+                if (linkPath && currentPath.includes(linkPath.split('/')[2])) {
                     link.classList.add('active');
                 }
             });

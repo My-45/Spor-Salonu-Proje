@@ -1,0 +1,349 @@
+﻿@model List<SporSalonu.Models.Entities.Yorum>
+@{
+    ViewData["Title"] = "Yorum Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #6366f1;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--primary), #8b5cf6);
+        border-radius: 15px;
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+    }
+
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid var(--primary);
+        transition: all 0.3s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .yorum-table {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+        .table thead {
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: white;
+        }
+
+            .table thead th {
+                border: none;
+                padding: 1rem;
+                font-weight: 600;
+            }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+            .table tbody tr:hover {
+                background-color: #f8fafc;
+            }
+
+    .badge-status {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-block;
+    }
+
+    .badge-onaylandi {
+        background: linear-gradient(135deg, var(--success), #14b8a6);
+        color: white;
+    }
+
+    .badge-bekliyor {
+        background: linear-gradient(135deg, var(--warning), #f97316);
+        color: white;
+    }
+
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        border: none;
+        margin: 0 0.25rem;
+    }
+
+    .btn-onayla {
+        background: var(--success);
+        color: white;
+    }
+
+        .btn-onayla:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+    .btn-reddet {
+        background: var(--danger);
+        color: white;
+    }
+
+        .btn-reddet:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+    .yorum-content {
+        max-width: 400px;
+        font-style: italic;
+        color: #64748b;
+        line-height: 1.5;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .user-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        opacity: 0.3;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Başlık -->
+    <div class="page-header">
+        <h1 class="fw-bold mb-2">
+            <i class="bi bi-chat-square-text"></i> Yorum Yönetimi
+        </h1>
+        <p class="mb-0 opacity-90">Kullanıcı yorumlarını onaylayın veya reddedin</p>
+    </div>
+
+    <!-- Bildirimler -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- İstatistikler -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-icon">💬</div>
+            <div class="stat-number">@Model.Count</div>
+            <div class="stat-label">Toplam Yorum</div>
+        </div>
+        <div class="stat-card" style="border-left-color: var(--success);">
+            <div class="stat-icon">✅</div>
+            <div class="stat-number" style="color: var(--success);">@Model.Count(y => y.Onaylandi)</div>
+            <div class="stat-label">Onaylanan</div>
+        </div>
+        <div class="stat-card" style="border-left-color: var(--warning);">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-number" style="color: var(--warning);">@Model.Count(y => !y.Onaylandi)</div>
+            <div class="stat-label">Bekleyen</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #fbbf24;">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-number" style="color: #fbbf24;">
+                @(Model.Any() ? Model.Average(y => y.Puan).ToString("0.0") : "0.0")
+            </div>
+            <div class="stat-label">Ortalama Puan</div>
+        </div>
+    </div>
+
+    <!-- Yorum Tablosu -->
+    <div class="yorum-table">
+        @if (Model.Any())
+        {
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Kullanıcı</th>
+                        <th style="width: 35%;">Yorum İçeriği</th>
+                        <th style="width: 10%;">Puan</th>
+                        <th style="width: 10%;">Durum</th>
+                        <th style="width: 10%;">Tarih</th>
+                        <th style="width: 10%;" class="text-center">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var yorum in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <span class="user-avatar">
+                                        @yorum.Uye?.AdSoyad?.Substring(0, 1).ToUpper()
+                                    </span>
+                                    <div>
+                                        <strong class="d-block">@yorum.Uye?.AdSoyad </strong>
+                                        <small class="text-muted">@yorum.Uye?.Email</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="yorum-content">
+                                    "@yorum.Icerik"
+                                </div>
+                            </td>
+                            <td>
+                                <div style="color: #fbbf24; font-size: 1.2rem;">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= yorum.Puan)
+                                        {
+                                            <span>⭐</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="opacity: 0.2;">⭐</span>
+                                        }
+                                    }
+                                </div>
+                                <small class="text-muted">(@yorum.Puan/5)</small>
+                            </td>
+                            <td>
+                                @if (yorum.Onaylandi)
+                                {
+                                    <span class="badge-status badge-onaylandi">
+                                        ✅ Onaylandı
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge-status badge-bekliyor">
+                                        ⏳ Bekliyor
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                <small class="d-block">
+                                    <i class="bi bi-calendar3"></i>
+                                    @yorum.OlusturmaTarihi.ToString("dd/MM/yyyy")
+                                </small>
+                                <small class="text-muted">
+                                    <i class="bi bi-clock"></i>
+                                    @yorum.OlusturmaTarihi.ToString("HH:mm")
+                                </small>
+                            </td>
+                            <td class="text-center">
+                                @if (!yorum.Onaylandi)
+                                {
+                                    <form asp-action="Onayla" asp-route-id="@yorum.Id" method="post"
+                                          style="display: inline-block;"
+                                          onsubmit="return confirm('Bu yorumu onaylamak istediğinizden emin misiniz?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-action btn-onayla" title="Onayla">
+                                            <i class="bi bi-check-lg"></i> Onayla
+                                        </button>
+                                    </form>
+                                }
+
+                                <form asp-action="Reddet" asp-route-id="@yorum.Id" method="post"
+                                      style="display: inline-block;"
+                                      onsubmit="return confirm('Bu yorumu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-action btn-reddet" title="Sil">
+                                        <i class="bi bi-trash"></i> @(yorum.Onaylandi ? "Sil" : "Reddet")
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">💬</div>
+                <h4 class="text-muted mb-3">Henüz Yorum Yok</h4>
+                <p class="text-muted">Kullanıcılar yorum yaptığında burada görünecektir.</p>
+            </div>
+        }
+    </div>
+</div>

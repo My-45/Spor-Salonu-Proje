@@ -1,0 +1,190 @@
+﻿@model SporSalonu.Models.ViewModels.YorumViewModel
+@{
+    ViewData["Title"] = "Yorum Yap";
+}
+
+<style>
+    :root {
+        --primary: #6366f1;
+        --secondary: #ec4899;
+    }
+
+    body {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+
+    .yorum-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        max-width: 700px;
+        margin: 3rem auto;
+    }
+
+    .star-rating {
+        display: flex;
+        gap: 0.5rem;
+        font-size: 2.5rem;
+        justify-content: center;
+        margin: 2rem 0;
+    }
+
+    .star {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #ddd;
+    }
+
+        .star:hover,
+        .star.active {
+            color: #fbbf24;
+            transform: scale(1.2);
+        }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border: none;
+        color: white;
+        padding: 1rem 3rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+    }
+
+    .header-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+    }
+</style>
+
+<div class="container">
+    <div class="yorum-card">
+        <div class="text-center mb-4">
+            <div class="header-icon">💬</div>
+            <h2 class="fw-bold">Yorumunuzu Paylaşın</h2>
+            <p class="text-muted">Deneyiminizi bizimle paylaşın!</p>
+        </div>
+
+        <form asp-action="Olustur" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <!-- Puan Seçimi -->
+            <div class="mb-4">
+                <label class="form-label fw-bold text-center d-block">Puanınız</label>
+                <div class="star-rating" id="starRating">
+                    <span class="star" data-value="1">⭐</span>
+                    <span class="star" data-value="2">⭐</span>
+                    <span class="star" data-value="3">⭐</span>
+                    <span class="star" data-value="4">⭐</span>
+                    <span class="star" data-value="5">⭐</span>
+                </div>
+                <input type="hidden" asp-for="Puan" id="puanInput" value="5" />
+                <span asp-validation-for="Puan" class="text-danger d-block text-center"></span>
+            </div>
+
+            <!-- Yorum Metni -->
+            <div class="mb-4">
+                <label asp-for="Icerik" class="form-label fw-bold">Yorumunuz</label>
+                <textarea asp-for="Icerik"
+                          class="form-control"
+                          rows="6"
+                          placeholder="Deneyiminizi detaylı bir şekilde anlatın... (En fazla 500 karakter)"
+                          maxlength="500"></textarea>
+                <span asp-validation-for="Icerik" class="text-danger"></span>
+                <small class="text-muted d-block mt-2">
+                    <span id="charCount">0</span>/500 karakter
+                </small>
+            </div>
+
+            <!-- Bilgilendirme -->
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                Yorumunuz admin onayından sonra yayınlanacaktır.
+            </div>
+
+            <!-- Butonlar -->
+            <div class="d-flex gap-3 justify-content-center">
+                <button type="submit" class="btn btn-gradient">
+                    ✍️ Yorumu Gönder
+                </button>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4">
+                    İptal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Yıldız Puanlama Sistemi
+        const stars = document.querySelectorAll('.star');
+        const puanInput = document.getElementById('puanInput');
+        let selectedRating = 5; // Varsayılan 5 yıldız
+
+        // Sayfa yüklendiğinde 5 yıldız seçili olsun
+        updateStars(5);
+
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.getAttribute('data-value'));
+                puanInput.value = selectedRating;
+                updateStars(selectedRating);
+            });
+
+            star.addEventListener('mouseenter', function() {
+                const hoverValue = parseInt(this.getAttribute('data-value'));
+                updateStars(hoverValue);
+            });
+        });
+
+        document.getElementById('starRating').addEventListener('mouseleave', function() {
+            updateStars(selectedRating);
+        });
+
+        function updateStars(rating) {
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Karakter Sayacı
+        const icerikTextarea = document.querySelector('textarea[name="Icerik"]');
+        const charCount = document.getElementById('charCount');
+
+        if (icerikTextarea) {
+            icerikTextarea.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+            });
+        }
+    </script>
+}
